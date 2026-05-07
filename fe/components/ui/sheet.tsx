@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -18,20 +18,59 @@ export interface SheetProps {
   className?: string;
 }
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function Sheet({ open, onClose, title, children, className }: SheetProps) {
   const reduce = useReducedMotion();
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
+
+    // Remember the trigger element so we can return focus on close.
+    previouslyFocused.current = document.activeElement as HTMLElement;
+
+    // Move focus into the dialog on open.
+    const dialog = dialogRef.current;
+    requestAnimationFrame(() => {
+      const focusables = dialog?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      focusables?.[0]?.focus();
+    });
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      // Trap Tab inside the dialog.
+      if (e.key === "Tab" && dialog) {
+        const focusables = Array.from(
+          dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
+
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      // Return focus to the element that opened the sheet.
+      previouslyFocused.current?.focus();
     };
   }, [open, onClose]);
 
@@ -42,6 +81,7 @@ export function Sheet({ open, onClose, title, children, className }: SheetProps)
           <motion.button
             type="button"
             aria-label="Tutup"
+            tabIndex={-1}
             onClick={onClose}
             initial="hidden"
             animate="show"
@@ -50,6 +90,7 @@ export function Sheet({ open, onClose, title, children, className }: SheetProps)
             className="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"
           />
           <motion.div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={title}
@@ -66,18 +107,24 @@ export function Sheet({ open, onClose, title, children, className }: SheetProps)
               <div className="flex-1">
                 {title ? (
                   <>
-                    <span className="block sm:hidden mx-auto h-1 w-10 rounded-pill bg-white/15 mb-3" />
+                    <span
+                      aria-hidden
+                      className="block sm:hidden mx-auto h-1 w-10 rounded-pill bg-white/15 mb-3"
+                    />
                     <h3 className="text-body font-semibold text-foreground">{title}</h3>
                   </>
                 ) : (
-                  <span className="block sm:hidden mx-auto h-1 w-10 rounded-pill bg-white/15" />
+                  <span
+                    aria-hidden
+                    className="block sm:hidden mx-auto h-1 w-10 rounded-pill bg-white/15"
+                  />
                 )}
               </div>
               <button
                 type="button"
                 aria-label="Tutup"
                 onClick={onClose}
-                className="size-9 inline-flex items-center justify-center rounded-pill hover:bg-white/5 cursor-pointer text-foreground-muted hover:text-foreground"
+                className="size-11 inline-flex items-center justify-center rounded-pill hover:bg-white/5 cursor-pointer text-foreground-muted hover:text-foreground"
               >
                 <CloseIcon />
               </button>
