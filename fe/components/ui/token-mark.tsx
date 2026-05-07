@@ -1,21 +1,26 @@
 import type { StablecoinSymbol } from "@/types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Stablecoin avatar with brand-correct hue. Uses centralized `--color-coin-*`
+ * tokens from globals.css so the per-issuer hex (#2775CA for USDC, #26A17B for
+ * USDT, etc.) lives in exactly one place.
+ */
 const palette: Record<StablecoinSymbol, { bg: string; ring: string; text: string }> = {
   USDC: {
-    bg: "bg-[#2775ca]/20",
-    ring: "ring-[#2775ca]/40",
-    text: "text-[#5ba6ff]",
+    bg: "bg-coin-usdc/20",
+    ring: "ring-coin-usdc/40",
+    text: "text-coin-usdc-tint",
   },
   USDT: {
-    bg: "bg-[#26a17b]/20",
-    ring: "ring-[#26a17b]/40",
-    text: "text-[#34c397]",
+    bg: "bg-coin-usdt/20",
+    ring: "ring-coin-usdt/40",
+    text: "text-coin-usdt-tint",
   },
   PYUSD: {
-    bg: "bg-[#0070ba]/20",
-    ring: "ring-[#0070ba]/40",
-    text: "text-[#5fb1ff]",
+    bg: "bg-coin-pyusd/20",
+    ring: "ring-coin-pyusd/40",
+    text: "text-coin-pyusd-tint",
   },
   USDG: {
     bg: "bg-accent-yellow/15",

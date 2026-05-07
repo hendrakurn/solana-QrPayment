@@ -29,8 +29,17 @@
   --color-on-primary-container: #002955;
   --color-accent-yellow: #ee9f0a;
   --color-accent-purple: #5220d8;
+  --color-accent-purple-soft: #cdbcff;
   --color-secondary-container: #4c13d2;
   --color-tertiary: #ffb953;
+
+  /* Stablecoin brand identity (USDC/USDT/PYUSD/USDG) — fixed by issuer */
+  --color-coin-usdc: #2775ca;
+  --color-coin-usdc-tint: #5ba6ff;
+  --color-coin-usdt: #26a17b;
+  --color-coin-usdt-tint: #34c397;
+  --color-coin-pyusd: #0070ba;
+  --color-coin-pyusd-tint: #5fb1ff;
 
   /* Semantic */
   --color-success: #1fd286;
@@ -87,6 +96,9 @@
   --shadow-glow-primary: 0 0 0 4px rgba(0, 136, 255, 0.18), 0 22px 60px rgba(0, 136, 255, 0.45);
   --shadow-glow-soft: 0 0 20px rgba(0, 136, 255, 0.3);
   --shadow-glow-tap: 0 0 40px rgba(0, 136, 255, 0.4);
+  --shadow-glow-success: 0 18px 40px -10px rgba(31, 210, 134, 0.55);
+  --shadow-press-primary: 0 10px 30px -12px rgba(0, 136, 255, 0.65);
+  --shadow-thumb: 0 4px 18px rgba(0, 0, 0, 0.45);
   --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.5);
 
   /* Motion */

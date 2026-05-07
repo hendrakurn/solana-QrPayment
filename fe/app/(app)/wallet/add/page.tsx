@@ -54,7 +54,7 @@ export default function AddWalletPage() {
       </ul>
 
       <article className="rounded-xl border border-border bg-surface-1 p-4 flex items-center gap-3">
-        <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-[#cdbcff]">
+        <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft">
           <SparklesIcon className="size-5" />
         </span>
         <div className="flex-1 min-w-0">

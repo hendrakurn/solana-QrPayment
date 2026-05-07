@@ -15,7 +15,7 @@ export default function SuccessPage() {
         <div className="relative mb-8 flex items-center justify-center">
           <span className="absolute size-44 rounded-pill bg-success/15 blur-2xl" />
           <span className="absolute size-32 rounded-pill border border-success/30 animate-tap-pulse" />
-          <span className="relative inline-flex size-24 items-center justify-center rounded-pill bg-success text-background shadow-[0_18px_40px_-10px_rgba(31,210,134,0.55)] animate-pop">
+          <span className="relative inline-flex size-24 items-center justify-center rounded-pill bg-success text-background shadow-[var(--shadow-glow-success)] animate-pop">
             <CheckIcon className="size-12" />
           </span>
         </div>

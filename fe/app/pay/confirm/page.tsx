@@ -52,7 +52,7 @@ export default function ConfirmPage() {
         </section>
 
         <article className="flex items-start gap-3 rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/15 via-surface to-surface p-3.5">
-          <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-[#cdbcff] shrink-0">
+          <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft shrink-0">
             <SparklesIcon className="size-5" />
           </span>
           <p className="text-body-sm leading-5 text-foreground-muted">

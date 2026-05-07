@@ -115,7 +115,7 @@ export function SlideToPay({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         style={{ transform: `translateX(${progress}px)` }}
-        className="absolute top-1 left-1 z-10 flex size-12 items-center justify-center rounded-pill bg-white text-primary shadow-[0_4px_18px_rgba(0,0,0,0.45)] cursor-grab active:cursor-grabbing"
+        className="absolute top-1 left-1 z-10 flex size-12 items-center justify-center rounded-pill bg-white text-primary shadow-[var(--shadow-thumb)] cursor-grab active:cursor-grabbing"
       >
         {confirmed ? (
           <span className="size-4 rounded-full border-2 border-primary border-t-transparent animate-spin-soft" />

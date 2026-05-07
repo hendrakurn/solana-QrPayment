@@ -18,12 +18,12 @@ export function AiSuggestion({ title, body, cta = "Tinjau saran" }: AiSuggestion
         className="pointer-events-none absolute -top-12 -right-12 size-32 rounded-full bg-accent-purple/25 blur-3xl"
       />
       <div className="relative flex items-start gap-3">
-        <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-[#cdbcff] shrink-0">
+        <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft shrink-0">
           <SparklesIcon className="size-5" />
         </span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-caption font-medium uppercase tracking-[0.16em] text-[#cdbcff]">
+            <span className="text-caption font-medium uppercase tracking-[0.16em] text-accent-purple-soft">
               SolPay AI
             </span>
             <span className="size-1 rounded-pill bg-foreground-subtle" />

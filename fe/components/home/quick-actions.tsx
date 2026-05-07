@@ -5,7 +5,7 @@ import { formatRupiah } from "@/lib/format";
 const palette = [
   "from-primary/30 to-primary/0 text-primary",
   "from-accent-yellow/30 to-accent-yellow/0 text-accent-yellow",
-  "from-accent-purple/40 to-accent-purple/0 text-[#cdbcff]",
+  "from-accent-purple/40 to-accent-purple/0 text-accent-purple-soft",
   "from-success/30 to-success/0 text-success",
 ];
 
