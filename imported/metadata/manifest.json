@@ -1,0 +1,119 @@
+{
+  "$schema": "stitch-mcp-import/v1",
+  "imported_at": "2026-05-07T18:14:00Z",
+  "source": {
+    "service": "MCP Stitch",
+    "endpoint": "mcp__stitch__list_projects + mcp__stitch__get_screen + mcp__stitch__list_design_systems"
+  },
+  "project": {
+    "name": "projects/18073327113733925519",
+    "id": "18073327113733925519",
+    "title": "Design System Implementation",
+    "device_type": "MOBILE",
+    "create_time": "2026-05-07T09:52:06.207800Z",
+    "update_time": "2026-05-07T09:58:44.675305Z",
+    "user_role": "OWNER",
+    "visibility": "PRIVATE",
+    "project_type": "TEXT_TO_UI_PRO",
+    "origin": "STITCH"
+  },
+  "screens": [
+    {
+      "index": 1,
+      "title": "SolPay Home V2",
+      "id": "171aaaf04532454288b9ea2d0c45079e",
+      "name": "projects/18073327113733925519/screens/171aaaf04532454288b9ea2d0c45079e",
+      "device_type": "MOBILE",
+      "width": 780,
+      "height": 1768,
+      "html_file": "screens/01-home-v2.html",
+      "screenshot_file": "screenshots/01-home-v2.jpg",
+      "html_resource_name": "projects/18073327113733925519/files/475bdaeb4f7c4d63b2a88d814da79470"
+    },
+    {
+      "index": 2,
+      "title": "My Wallet V2",
+      "id": "fffbfaac8bb34e83963e41d141b8bdce",
+      "name": "projects/18073327113733925519/screens/fffbfaac8bb34e83963e41d141b8bdce",
+      "device_type": "MOBILE",
+      "width": 780,
+      "height": 2280,
+      "html_file": "screens/02-wallet-v2.html",
+      "screenshot_file": "screenshots/02-wallet-v2.jpg",
+      "html_resource_name": "projects/18073327113733925519/files/f85c2dc19b084be58ca5348f98dab4c7"
+    },
+    {
+      "index": 3,
+      "title": "Transaction History V2",
+      "id": "e03cdee149f9415caa877e55e3e08df8",
+      "name": "projects/18073327113733925519/screens/e03cdee149f9415caa877e55e3e08df8",
+      "device_type": "MOBILE",
+      "width": 780,
+      "height": 1942,
+      "html_file": "screens/03-history-v2.html",
+      "screenshot_file": "screenshots/03-history-v2.jpg",
+      "html_resource_name": "projects/18073327113733925519/files/6d92cc246cb64b438644631911871e7f"
+    },
+    {
+      "index": 4,
+      "title": "Confirm Payment V2",
+      "id": "69df624fe0c7421a80af9df97a09d82e",
+      "name": "projects/18073327113733925519/screens/69df624fe0c7421a80af9df97a09d82e",
+      "device_type": "MOBILE",
+      "width": 780,
+      "height": 1784,
+      "html_file": "screens/04-confirm-v2.html",
+      "screenshot_file": "screenshots/04-confirm-v2.jpg",
+      "html_resource_name": "projects/18073327113733925519/files/934b2cc6e8184323be16e2849f522d03"
+    },
+    {
+      "index": 5,
+      "title": "Tap to Pay Scanner V2",
+      "id": "44e6c21707354ab2a6f12603670620a3",
+      "name": "projects/18073327113733925519/screens/44e6c21707354ab2a6f12603670620a3",
+      "device_type": "MOBILE",
+      "width": 780,
+      "height": 1768,
+      "html_file": "screens/05-scanner-v2.html",
+      "screenshot_file": "screenshots/05-scanner-v2.jpg",
+      "html_resource_name": "projects/18073327113733925519/files/91bb044786284ebd9de78a3850846411"
+    }
+  ],
+  "design_systems": [
+    {
+      "asset_id": "01acebda3c4942d09aaa98bdb44c6cc3",
+      "name": "assets/01acebda3c4942d09aaa98bdb44c6cc3",
+      "display_name": "SolPay V2 Design System",
+      "version": "1",
+      "body_font": "MANROPE",
+      "headline_font": "MANROPE",
+      "color_mode": "DARK",
+      "color_variant": "FIDELITY",
+      "roundness": "ROUND_EIGHT",
+      "primary_color": "#0088FF",
+      "secondary_color": "#5220D8",
+      "tertiary_color": "#EE9F0A",
+      "guidelines_file": "design-system/v2-guidelines.md",
+      "tokens_file": "design-system/v2-tokens.yaml",
+      "raw_file": "design-system/v2-raw.json"
+    },
+    {
+      "asset_id": "b01afdb06ccc4490bc2f407339db2dad",
+      "name": "assets/b01afdb06ccc4490bc2f407339db2dad",
+      "display_name": "SolPay Design System",
+      "version": "1",
+      "body_font": "PLUS_JAKARTA_SANS",
+      "headline_font": "PLUS_JAKARTA_SANS",
+      "color_mode": "DARK",
+      "color_variant": "FIDELITY",
+      "roundness": "ROUND_EIGHT",
+      "primary_color": "#0088FF",
+      "secondary_color": "#5220D8",
+      "tertiary_color": "#EE9F0A",
+      "guidelines_file": "design-system/v1-guidelines.md",
+      "tokens_file": "design-system/v1-tokens.yaml",
+      "raw_file": "design-system/v1-raw.json"
+    }
+  ],
+  "notes": "Files in this directory are the untouched source-of-truth import from MCP Stitch. Do NOT modify in place; treat as read-only reference for downstream refactor work."
+}

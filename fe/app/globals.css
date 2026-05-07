@@ -1,26 +1,259 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * SolPay design tokens — mirrored from MCP Stitch design system.
+ * Surface tonal scale follows Material 3 (low → high), brand overrides keep
+ * SolPay's #0088FF / #5220D8 / #EE9F0A. Update tokens here, never inline.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Surfaces — Material 3 tonal scale, dark fintech */
+  --color-background: #000915;
+  --color-surface-low: #0a0e15;
+  --color-surface: #1c1c1d;
+  --color-surface-1: #181c23;
+  --color-surface-2: #1c2027;
+  --color-surface-3: #262a32;
+  --color-surface-4: #31353d;
+  --color-surface-bright: #353941;
+
+  /* Foreground / text (Stitch on-surface, on-surface-variant) */
+  --color-foreground: #f6f6f6;
+  --color-foreground-muted: #c0c6d6;
+  --color-foreground-subtle: #8a919f;
+
+  /* Brand — SolPay overrides */
+  --color-primary: #0088ff;
+  --color-primary-soft: #1d6dff;
+  --color-primary-deep: #0050b8;
+  --color-primary-container: #3491ff;
+  --color-on-primary-container: #002955;
+  --color-accent-yellow: #ee9f0a;
+  --color-accent-purple: #5220d8;
+  --color-secondary-container: #4c13d2;
+  --color-tertiary: #ffb953;
+
+  /* Semantic */
+  --color-success: #1fd286;
+  --color-success-soft: #103d2c;
+  --color-danger: #ffb4ab;
+  --color-danger-deep: #93000a;
+  --color-warning: #f5b021;
+
+  /* Borders — outline-variant from Stitch */
+  --color-border: #2a3142;
+  --color-border-strong: #404754;
+
+  /* Typography */
+  --font-sans: var(--font-outfit);
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+
+  /* Type scale (Stitch hero/section/body/caption) */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--letter-spacing: 0.01em;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-section: 1.5rem;
+  --text-section--line-height: 2rem;
+  --text-display: 2rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display-lg: 2.75rem;
+  --text-display-lg--line-height: 3rem;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-xl: 3.5rem;
+  --text-display-xl--line-height: 3.75rem;
+  --text-display-xl--letter-spacing: -0.025em;
+
+  /* Radius — Stitch ROUND_EIGHT default + extras */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-pill: 9999px;
+
+  /* Spacing extras (mobile touch targets + Stitch container-margin) */
+  --spacing-touch: 44px;
+  --spacing-tap: 56px;
+  --spacing-edge: 20px;
+
+  /* Elevation — soft, dark-aware */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-card-strong: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 18px 60px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary: 0 0 0 4px rgba(0, 136, 255, 0.18), 0 22px 60px rgba(0, 136, 255, 0.45);
+  --shadow-glow-soft: 0 0 20px rgba(0, 136, 255, 0.3);
+  --shadow-glow-tap: 0 0 40px rgba(0, 136, 255, 0.4);
+  --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 120ms;
+  --duration-fast: 200ms;
+  --duration-normal: 280ms;
+  --duration-slow: 420ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base body — dark-first fintech */
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01" on, "cv11" on;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection */
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  color: var(--color-foreground);
+}
+
+/* Focus rings — accessible across dark surfaces */
+:where(button, a, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Hide scrollbars on horizontal chip rows */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Brand wordmark glow — used on top-bar logo */
+.text-glow-primary {
+  text-shadow: 0 0 8px rgba(0, 136, 255, 0.45);
+}
+
+/* Custom keyframes */
+@keyframes solpay-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes solpay-scan {
+  0% {
+    transform: translateY(0%);
+    opacity: 0.4;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(calc(100% - 2px));
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 0.4;
+  }
+}
+
+@keyframes solpay-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes solpay-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes solpay-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes solpay-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-tap-pulse {
+  animation: solpay-pulse 2.4s var(--ease-in-out-soft) infinite;
+}
+
+.animate-scan-line {
+  animation: solpay-scan 2.6s var(--ease-in-out-soft) infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 800px 100%;
+  animation: solpay-shimmer 1.6s linear infinite;
+}
+
+.animate-rise {
+  animation: solpay-rise var(--duration-normal) var(--ease-out-soft) both;
+}
+
+.animate-pop {
+  animation: solpay-pop var(--duration-slow) var(--ease-out-soft) both;
+}
+
+.animate-spin-soft {
+  animation: solpay-spin 1.2s linear infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-tap-pulse,
+  .animate-scan-line,
+  .animate-shimmer,
+  .animate-rise,
+  .animate-pop,
+  .animate-spin-soft {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+  }
 }
