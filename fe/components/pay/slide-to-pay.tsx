@@ -4,6 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronRightIcon, LockIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
+/** Diameter of the draggable thumb in pixels. Same as size-12 (h-12 w-12). */
+const THUMB_SIZE_PX = 56;
+/**
+ * Fraction of the available travel that must be reached before the gesture
+ * commits. Below this the thumb springs back to start; above it the action
+ * fires and the track locks.
+ */
+const COMMIT_THRESHOLD = 0.92;
+
 /**
  * Slide-to-pay control for confirming a sensitive action.
  *
@@ -44,7 +53,7 @@ export function SlideToPay({
     if (startX.current === null || confirmed) return;
     const track = trackRef.current;
     if (!track) return;
-    const max = track.clientWidth - 56;
+    const max = track.clientWidth - THUMB_SIZE_PX;
     const next = Math.max(0, Math.min(max, e.clientX - startX.current));
     setProgress(next);
   };
@@ -53,8 +62,8 @@ export function SlideToPay({
     const track = trackRef.current;
     startX.current = null;
     if (!track) return;
-    const max = track.clientWidth - 56;
-    if (progress > max * 0.92) {
+    const max = track.clientWidth - THUMB_SIZE_PX;
+    if (progress > max * COMMIT_THRESHOLD) {
       setProgress(max);
       setConfirmed(true);
       onConfirm();
@@ -98,7 +107,7 @@ export function SlideToPay({
       {/* Filled progress with gradient — visually communicates how far user has slid */}
       <div
         aria-hidden
-        style={{ width: progress + 56 }}
+        style={{ width: progress + THUMB_SIZE_PX }}
         className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary-deep via-primary to-primary-soft transition-[width] duration-100"
       />
 
