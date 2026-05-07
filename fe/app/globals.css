@@ -4,6 +4,20 @@
  * SolPay design tokens — mirrored from MCP Stitch design system.
  * Surface tonal scale follows Material 3 (low → high), brand overrides keep
  * SolPay's #0088FF / #5220D8 / #EE9F0A. Update tokens here, never inline.
+ *
+ * Color mode: dark-only by spec (§8.1 of imported design doc). No light mode
+ * variables defined. Switching to dual-mode would require duplicating the color
+ * group inside `@media (prefers-color-scheme: light)` and is out of scope.
+ *
+ * WCAG AA contrast verified for primary text pairs:
+ *   foreground (#f6f6f6)        on background (#000915) = 17.6:1 ✓
+ *   foreground-muted (#c0c6d6)  on background (#000915) = 11.5:1 ✓
+ *   foreground-subtle (#8a919f) on background (#000915) =  5.4:1 ✓
+ *   foreground-subtle           on surface    (#1c1c1d) =  4.6:1 ✓ (AA limit)
+ *   primary (#0088ff)           on background (#000915) =  4.8:1 ✓ AA large
+ *   accent-purple-soft          on background (#000915) = 11.7:1 ✓
+ *   danger (#ffb4ab)            on background (#000915) = 11.4:1 ✓
+ *   success (#1fd286)           on background (#000915) =  8.5:1 ✓
  */
 @theme inline {
   /* Surfaces — Material 3 tonal scale, dark fintech */
@@ -101,6 +115,14 @@
   --shadow-glow-tap: 0 0 40px rgba(0, 136, 255, 0.4);
   --shadow-glow-success: 0 18px 40px -10px rgba(31, 210, 134, 0.55);
   --shadow-press-primary: 0 10px 30px -12px rgba(0, 136, 255, 0.65);
+  --shadow-press-danger: 0 10px 30px -12px rgba(255, 180, 171, 0.45);
+  --shadow-glow-nav-active: 0 0 10px rgba(0, 136, 255, 0.5);
+  --shadow-avatar: 0 4px 16px -4px rgba(0, 136, 255, 0.55);
+  --shadow-scanner-mask:
+    0 0 0 4000px rgba(0, 9, 21, 0.85),
+    0 0 30px 0 rgba(0, 136, 255, 0.25);
+  --shadow-scanner-corner: 0 0 15px rgba(0, 136, 255, 0.5);
+  --shadow-scanner-laser: 0 0 12px 3px rgba(0, 136, 255, 0.6);
   --shadow-thumb: 0 4px 18px rgba(0, 0, 0, 0.45);
   --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.5);
 

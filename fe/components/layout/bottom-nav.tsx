@@ -84,7 +84,7 @@ function NavButton({ item, active }: { item: NavItem; active: boolean }) {
       className={cn(
         "flex h-12 w-16 flex-col items-center justify-center gap-0.5 rounded-pill cursor-pointer transition-colors",
         active
-          ? "text-primary drop-shadow-[0_0_10px_rgba(0,136,255,0.5)]"
+          ? "text-primary drop-shadow-[var(--shadow-glow-nav-active)]"
           : "text-foreground-subtle hover:text-foreground",
       )}
     >

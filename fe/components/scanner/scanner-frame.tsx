@@ -11,7 +11,7 @@ export function ScannerFrame({ className }: { className?: string }) {
     <div
       className={cn(
         "relative size-72 rounded-xl border border-primary/30",
-        "shadow-[0_0_0_4000px_rgba(0,9,21,0.85),0_0_30px_0_rgba(0,136,255,0.25)]",
+        "shadow-[var(--shadow-scanner-mask)]",
         className,
       )}
     >
@@ -24,7 +24,7 @@ export function ScannerFrame({ className }: { className?: string }) {
       {/* Scanning laser */}
       <span
         aria-hidden
-        className="absolute inset-x-0 top-0 mx-3 h-[2px] -translate-y-px bg-primary opacity-90 shadow-[0_0_12px_3px_rgba(0,136,255,0.6)] animate-scan-line"
+        className="absolute inset-x-0 top-0 mx-3 h-[2px] -translate-y-px bg-primary opacity-90 shadow-[var(--shadow-scanner-laser)] animate-scan-line"
       />
     </div>
   );
@@ -42,7 +42,7 @@ function Bracket({ position }: { position: keyof typeof positions }) {
     <span
       aria-hidden
       className={cn(
-        "absolute size-10 border-primary shadow-[0_0_15px_rgba(0,136,255,0.5)]",
+        "absolute size-10 border-primary shadow-[var(--shadow-scanner-corner)]",
         positions[position],
       )}
     />

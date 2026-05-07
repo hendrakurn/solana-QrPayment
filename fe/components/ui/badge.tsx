@@ -9,7 +9,7 @@ const tones: Record<Tone, string> = {
   success: "bg-success/14 text-success border-success/30",
   warning: "bg-warning/12 text-warning border-warning/30",
   danger: "bg-danger/14 text-danger border-danger/30",
-  purple: "bg-accent-purple/18 text-[#bba6ff] border-accent-purple/35",
+  purple: "bg-accent-purple/18 text-accent-purple-soft border-accent-purple/35",
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
