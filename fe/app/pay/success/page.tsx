@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckIcon, ZapIcon, ArrowUpRightIcon } from "@/components/icons";
+import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { mockPaymentDraft } from "@/data/payment";
 import { mockWallets } from "@/data/wallets";
 import { formatRupiah, formatStable } from "@/lib/format";
@@ -11,7 +12,13 @@ export default function SuccessPage() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <main className="flex flex-1 flex-col items-center justify-center px-edge text-center">
+      <MotionSection
+        as="main"
+        stagger
+        immediate
+        className="flex flex-1 flex-col items-center justify-center px-edge text-center"
+      >
+        {/* Animated check mark — pure CSS so it doesn't mix with Framer on same element */}
         <div className="relative mb-8 flex items-center justify-center">
           <span className="absolute size-44 rounded-pill bg-success/15 blur-2xl" />
           <span className="absolute size-32 rounded-pill border border-success/30 animate-tap-pulse" />
@@ -20,15 +27,25 @@ export default function SuccessPage() {
           </span>
         </div>
 
-        <h1 className="text-display font-semibold tracking-tight text-foreground animate-rise">
-          Pembayaran berhasil
-        </h1>
-        <p className="mt-2 max-w-[32ch] text-body text-foreground-muted animate-rise">
+        <MotionItem
+          as="div"
+          className="text-display font-semibold tracking-tight text-foreground"
+        >
+          <h1>Pembayaran berhasil</h1>
+        </MotionItem>
+
+        <MotionItem
+          as="p"
+          className="mt-2 max-w-[32ch] text-body text-foreground-muted"
+        >
           {mockPaymentDraft.merchant.name} telah menerima settlement Rupiah lewat
           jalur QRIS resmi.
-        </p>
+        </MotionItem>
 
-        <div className="mt-8 w-full max-w-sm rounded-xl border border-border-strong/60 bg-surface p-5 text-left animate-rise">
+        <MotionItem
+          as="article"
+          className="mt-8 w-full max-w-sm rounded-xl border border-border-strong/60 bg-surface p-5 text-left"
+        >
           <div className="flex items-baseline justify-between">
             <span className="text-caption uppercase tracking-[0.18em] text-foreground-muted">
               Total dibayar
@@ -49,8 +66,8 @@ export default function SuccessPage() {
             <ZapIcon className="size-3.5" />
             Diselesaikan dalam 6,2 detik
           </div>
-        </div>
-      </main>
+        </MotionItem>
+      </MotionSection>
 
       <footer className="px-edge pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3">
         <div className="mx-auto flex w-full max-w-canvas-inner flex-col gap-3">

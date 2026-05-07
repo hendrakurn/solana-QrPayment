@@ -1,6 +1,15 @@
+"use client";
+
 import { forwardRef } from "react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  buttonHover,
+  buttonHoverSpring,
+  buttonTap,
+} from "@/components/motion/motion-tokens";
 
 type Variant = "ghost" | "surface" | "primary" | "glass";
 type Size = "sm" | "md" | "lg";
@@ -20,7 +29,8 @@ const sizes: Record<Size, string> = {
   lg: "size-12",
 };
 
-export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps
+  extends Omit<HTMLMotionProps<"button">, "whileHover" | "whileTap" | "transition" | "children"> {
   variant?: Variant;
   size?: Size;
   label: string;
@@ -28,14 +38,18 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { variant = "surface", size = "md", className, label, icon, ...rest },
+  { variant = "surface", size = "md", type = "button", className, label, icon, ...rest },
   ref,
 ) {
+  const reduce = useReducedMotion();
   return (
-    <button
+    <motion.button
       ref={ref}
-      type="button"
+      type={type}
       aria-label={label}
+      whileHover={reduce ? undefined : buttonHover}
+      whileTap={reduce ? undefined : buttonTap}
+      transition={buttonHoverSpring}
       className={cn(
         "inline-flex items-center justify-center rounded-pill cursor-pointer transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         variants[variant],
@@ -46,6 +60,6 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     >
       <span className="sr-only">{label}</span>
       {icon}
-    </button>
+    </motion.button>
   );
 });

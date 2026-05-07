@@ -9,6 +9,7 @@ import { TapToPay } from "@/components/home/tap-to-pay";
 import { AiSuggestion } from "@/components/home/ai-suggestion";
 import { QuickActions } from "@/components/home/quick-actions";
 import { TransactionRow } from "@/components/transactions/transaction-row";
+import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { mockUser } from "@/data/user";
 import { mockWallets, totalFiatBalance } from "@/data/wallets";
 import { mockTransactions } from "@/data/transactions";
@@ -20,45 +21,53 @@ export default function HomePage() {
   const recent = mockTransactions.slice(0, 3);
 
   return (
-    <div className="flex flex-col gap-6">
-      <TopBar
-        showWordmark
-        leading={
-          <Link
-            href="/settings"
-            aria-label="Buka pengaturan"
-            className="cursor-pointer rounded-pill"
-          >
-            <Avatar initials={mockUser.avatarSeed} />
-          </Link>
-        }
-        trailing={
-          <IconButton
-            variant="ghost"
-            label="Cari transaksi"
-            icon={<SearchIcon className="size-5 text-primary" />}
-          />
-        }
-      />
+    <MotionSection stagger immediate className="flex flex-col gap-6">
+      <MotionItem>
+        <TopBar
+          showWordmark
+          leading={
+            <Link
+              href="/settings"
+              aria-label="Buka pengaturan"
+              className="cursor-pointer rounded-pill"
+            >
+              <Avatar initials={mockUser.avatarSeed} />
+            </Link>
+          }
+          trailing={
+            <IconButton
+              variant="ghost"
+              label="Cari transaksi"
+              icon={<SearchIcon className="size-5 text-primary" />}
+            />
+          }
+        />
+      </MotionItem>
 
-      <BalanceCard totalIdr={total} walletCount={mockWallets.length} trend24h={trend} />
+      <MotionItem>
+        <BalanceCard totalIdr={total} walletCount={mockWallets.length} trend24h={trend} />
+      </MotionItem>
 
-      <TapToPay />
+      <MotionItem>
+        <TapToPay />
+      </MotionItem>
 
-      <AiSuggestion
-        title="USDC memberi rate terbaik untuk QRIS"
-        body={`Rate aktif Rp 15.640/USDC. Hemat sekitar ${formatRupiah(120)} per transaksi vs USDT.`}
-      />
+      <MotionItem>
+        <AiSuggestion
+          title="USDC memberi rate terbaik untuk QRIS"
+          body={`Rate aktif Rp 15.640/USDC. Hemat sekitar ${formatRupiah(120)} per transaksi vs USDT.`}
+        />
+      </MotionItem>
 
-      <section className="flex flex-col gap-3">
+      <MotionItem as="section" className="flex flex-col gap-3">
         <SectionTitle
           title="Cepat bayar lagi"
           caption="Merchant yang paling sering kamu pakai"
         />
         <QuickActions />
-      </section>
+      </MotionItem>
 
-      <section className="flex flex-col gap-2">
+      <MotionItem as="section" className="flex flex-col gap-2">
         <SectionTitle
           title="Aktivitas terbaru"
           action={
@@ -77,7 +86,7 @@ export default function HomePage() {
             </li>
           ))}
         </ul>
-      </section>
-    </div>
+      </MotionItem>
+    </MotionSection>
   );
 }

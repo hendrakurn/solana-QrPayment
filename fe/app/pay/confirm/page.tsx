@@ -10,6 +10,7 @@ import { AmountDisplay } from "@/components/pay/amount-display";
 import { WalletSelector } from "@/components/pay/wallet-selector";
 import { TotalBreakdown } from "@/components/pay/total-breakdown";
 import { SlideToPay } from "@/components/pay/slide-to-pay";
+import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { mockWallets } from "@/data/wallets";
 import { mockPaymentDraft } from "@/data/payment";
 
@@ -33,15 +34,24 @@ export default function ConfirmPage() {
         <div className="size-10" />
       </header>
 
-      <main className="flex-1 flex flex-col gap-6 px-edge pt-6 pb-40">
-        <MerchantCard merchant={mockPaymentDraft.merchant} />
+      <MotionSection
+        as="main"
+        stagger
+        immediate
+        className="flex-1 flex flex-col gap-6 px-edge pt-6 pb-40"
+      >
+        <MotionItem>
+          <MerchantCard merchant={mockPaymentDraft.merchant} />
+        </MotionItem>
 
-        <AmountDisplay
-          amountIdr={mockPaymentDraft.amountIdr}
-          helper={`≈ ${(mockPaymentDraft.amountIdr / mockPaymentDraft.rate).toFixed(2)} ${wallet.symbol}`}
-        />
+        <MotionItem>
+          <AmountDisplay
+            amountIdr={mockPaymentDraft.amountIdr}
+            helper={`≈ ${(mockPaymentDraft.amountIdr / mockPaymentDraft.rate).toFixed(2)} ${wallet.symbol}`}
+          />
+        </MotionItem>
 
-        <section className="flex flex-col gap-3">
+        <MotionItem as="section" className="flex flex-col gap-3">
           <h3 className="text-body font-semibold text-foreground">Pilih sumber dana</h3>
           <WalletSelector
             wallets={mockWallets}
@@ -49,9 +59,12 @@ export default function ConfirmPage() {
             recommendedId={mockPaymentDraft.recommendedWalletId}
             onChange={setWalletId}
           />
-        </section>
+        </MotionItem>
 
-        <article className="flex items-start gap-3 rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/15 via-surface to-surface p-3.5">
+        <MotionItem
+          as="article"
+          className="flex items-start gap-3 rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/15 via-surface to-surface p-3.5"
+        >
           <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft shrink-0">
             <SparklesIcon className="size-5" />
           </span>
@@ -60,15 +73,17 @@ export default function ConfirmPage() {
             {wallet.symbol} memberi rate paling kompetitif untuk transaksi ini
             dan tetap menjaga posisi yield-mu di Solana.
           </p>
-        </article>
+        </MotionItem>
 
-        <TotalBreakdown
-          amountIdr={mockPaymentDraft.amountIdr}
-          feeIdr={mockPaymentDraft.feeIdr}
-          rate={mockPaymentDraft.rate}
-          symbol={wallet.symbol}
-        />
-      </main>
+        <MotionItem>
+          <TotalBreakdown
+            amountIdr={mockPaymentDraft.amountIdr}
+            feeIdr={mockPaymentDraft.feeIdr}
+            rate={mockPaymentDraft.rate}
+            symbol={wallet.symbol}
+          />
+        </MotionItem>
+      </MotionSection>
 
       {/* Sticky bottom — slide-to-pay (preserved interaction) */}
       <footer className="fixed inset-x-0 bottom-0 z-30 px-edge pt-3 pb-[calc(env(safe-area-inset-bottom)+20px)] border-t border-white/8 bg-background/90 backdrop-blur-xl">

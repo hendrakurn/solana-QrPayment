@@ -3,6 +3,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Avatar } from "@/components/layout/avatar";
 import { IconButton } from "@/components/ui/icon-button";
 import { HistoryView } from "@/components/transactions/history-view";
+import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { SortIcon, SparklesIcon } from "@/components/icons";
 import { mockUser } from "@/data/user";
 import { mockTransactions } from "@/data/transactions";
@@ -16,33 +17,38 @@ export default function HistoryPage() {
   const successCount = mockTransactions.filter((t) => t.status === "success").length;
 
   return (
-    <div className="flex flex-col gap-6">
-      <TopBar
-        showWordmark
-        leading={
-          <Link href="/settings" aria-label="Buka pengaturan">
-            <Avatar initials={mockUser.avatarSeed} />
-          </Link>
-        }
-        trailing={
-          <IconButton
-            label="Urutkan"
-            variant="ghost"
-            icon={<SortIcon className="size-5 text-primary" />}
-          />
-        }
-      />
+    <MotionSection stagger immediate className="flex flex-col gap-6">
+      <MotionItem>
+        <TopBar
+          showWordmark
+          leading={
+            <Link href="/settings" aria-label="Buka pengaturan">
+              <Avatar initials={mockUser.avatarSeed} />
+            </Link>
+          }
+          trailing={
+            <IconButton
+              label="Urutkan"
+              variant="ghost"
+              icon={<SortIcon className="size-5 text-primary" />}
+            />
+          }
+        />
+      </MotionItem>
 
-      <header className="flex flex-col gap-1">
+      <MotionItem as="header" className="flex flex-col gap-1">
         <h2 className="text-section font-semibold tracking-tight text-foreground">
           Transaksi
         </h2>
         <p className="text-body-sm text-foreground-muted">
           {successCount} pembayaran sukses · {formatRupiah(total)} bulan ini
         </p>
-      </header>
+      </MotionItem>
 
-      <article className="rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/12 via-surface to-surface p-3.5 flex items-start gap-3">
+      <MotionItem
+        as="article"
+        className="rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/12 via-surface to-surface p-3.5 flex items-start gap-3"
+      >
         <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft shrink-0">
           <SparklesIcon className="size-5" />
         </span>
@@ -51,9 +57,11 @@ export default function HistoryPage() {
           <span className="text-foreground">Food &amp; Drinks</span> menyumbang
           45% pengeluaranmu pekan ini · 98% sukses.
         </p>
-      </article>
+      </MotionItem>
 
-      <HistoryView transactions={mockTransactions} />
-    </div>
+      <MotionItem>
+        <HistoryView transactions={mockTransactions} />
+      </MotionItem>
+    </MotionSection>
   );
 }

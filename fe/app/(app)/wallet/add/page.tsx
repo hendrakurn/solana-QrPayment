@@ -3,6 +3,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { TokenMark } from "@/components/ui/token-mark";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon, ShieldCheckIcon, SparklesIcon } from "@/components/icons";
+import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import type { StablecoinSymbol } from "@/types";
 
 const supported: { symbol: StablecoinSymbol; name: string; apr: string; tag?: string }[] = [
@@ -14,10 +15,15 @@ const supported: { symbol: StablecoinSymbol; name: string; apr: string; tag?: st
 
 export default function AddWalletPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <TopBar back="/wallet" title="Tambah dompet" subtitle="Pilih stablecoin Solana" />
+    <MotionSection stagger immediate className="flex flex-col gap-6">
+      <MotionItem>
+        <TopBar back="/wallet" title="Tambah dompet" subtitle="Pilih stablecoin Solana" />
+      </MotionItem>
 
-      <article className="rounded-xl border border-border-strong/60 bg-gradient-to-b from-surface-3 to-surface-2 p-4 flex items-start gap-3 shadow-[var(--shadow-card)]">
+      <MotionItem
+        as="article"
+        className="rounded-xl border border-border-strong/60 bg-gradient-to-b from-surface-3 to-surface-2 p-4 flex items-start gap-3 shadow-[var(--shadow-card)]"
+      >
         <span className="inline-flex size-10 items-center justify-center rounded-pill bg-primary/15 text-primary shrink-0">
           <ShieldCheckIcon className="size-5" />
         </span>
@@ -28,9 +34,9 @@ export default function AddWalletPage() {
             biometrik. Kamu memegang kendali penuh.
           </p>
         </div>
-      </article>
+      </MotionItem>
 
-      <ul className="flex flex-col gap-2.5">
+      <MotionItem as="ul" className="flex flex-col gap-2.5">
         {supported.map((coin) => (
           <li key={coin.symbol}>
             <button
@@ -51,9 +57,12 @@ export default function AddWalletPage() {
             </button>
           </li>
         ))}
-      </ul>
+      </MotionItem>
 
-      <article className="rounded-xl border border-border bg-surface-1 p-4 flex items-center gap-3">
+      <MotionItem
+        as="article"
+        className="rounded-xl border border-border bg-surface-1 p-4 flex items-center gap-3"
+      >
         <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft">
           <SparklesIcon className="size-5" />
         </span>
@@ -69,7 +78,7 @@ export default function AddWalletPage() {
         >
           Hubungkan
         </Link>
-      </article>
-    </div>
+      </MotionItem>
+    </MotionSection>
   );
 }

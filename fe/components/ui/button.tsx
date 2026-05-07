@@ -1,6 +1,15 @@
+"use client";
+
 import { forwardRef } from "react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  buttonHover,
+  buttonHoverSpring,
+  buttonTap,
+} from "@/components/motion/motion-tokens";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "soft";
 type Size = "sm" | "md" | "lg";
@@ -26,19 +35,25 @@ const sizes: Record<Size, string> = {
   lg: "h-tap px-6 text-body",
 };
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends Omit<
+    HTMLMotionProps<"button">,
+    "whileHover" | "whileTap" | "transition" | "children"
+  > {
   variant?: Variant;
   size?: Size;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   loading?: boolean;
   fullWidth?: boolean;
+  children?: ReactNode;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     variant = "primary",
     size = "md",
+    type = "button",
     className,
     iconLeft,
     iconRight,
@@ -50,11 +65,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
+  const reduce = useReducedMotion();
+
   return (
-    <button
+    <motion.button
       ref={ref}
+      type={type}
       disabled={disabled || loading}
       data-loading={loading || undefined}
+      whileHover={reduce || disabled || loading ? undefined : buttonHover}
+      whileTap={reduce || disabled || loading ? undefined : buttonTap}
+      transition={buttonHoverSpring}
       className={cn(base, variants[variant], sizes[size], fullWidth && "w-full", className)}
       {...rest}
     >
@@ -65,6 +86,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       <span>{children}</span>
       {!loading && iconRight}
-    </button>
+    </motion.button>
   );
 });

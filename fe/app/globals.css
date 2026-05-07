@@ -231,17 +231,6 @@ body {
   }
 }
 
-@keyframes solpay-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes solpay-spin {
   to {
     transform: rotate(360deg);
@@ -267,10 +256,6 @@ body {
   animation: solpay-shimmer 1.6s linear infinite;
 }
 
-.animate-rise {
-  animation: solpay-rise var(--duration-normal) var(--ease-out-soft) both;
-}
-
 .animate-pop {
   animation: solpay-pop var(--duration-slow) var(--ease-out-soft) both;
 }
@@ -284,7 +269,6 @@ body {
   .animate-tap-pulse,
   .animate-scan-line,
   .animate-shimmer,
-  .animate-rise,
   .animate-pop,
   .animate-spin-soft {
     animation: none !important;
