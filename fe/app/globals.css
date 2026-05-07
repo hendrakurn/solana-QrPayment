@@ -57,6 +57,9 @@
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
 
   /* Type scale (Stitch hero/section/body/caption) */
+  --text-nav: 0.625rem; /* 10px — bottom-nav micro labels */
+  --text-nav--line-height: 0.75rem;
+  --text-nav--letter-spacing: 0.01em;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
   --text-caption--letter-spacing: 0.01em;

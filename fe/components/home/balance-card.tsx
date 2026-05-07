@@ -29,7 +29,7 @@ export function BalanceCard({ totalIdr, walletCount, trend24h }: BalanceCardProp
         </span>
       </div>
       <div className="mt-3 inline-flex items-center gap-2 rounded-pill border border-border-strong bg-surface-2 px-3 py-1.5">
-        <span className="inline-flex size-5 items-center justify-center rounded-pill bg-primary text-[10px] font-bold text-white">
+        <span className="inline-flex size-5 items-center justify-center rounded-pill bg-primary text-caption font-semibold text-white">
           $
         </span>
         <span className="text-caption text-foreground">

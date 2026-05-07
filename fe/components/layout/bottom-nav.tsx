@@ -89,7 +89,7 @@ function NavButton({ item, active }: { item: NavItem; active: boolean }) {
       )}
     >
       {item.icon}
-      <span className="text-[10px] font-medium leading-none tracking-tight">{item.label}</span>
+      <span className="text-nav font-medium leading-none tracking-tight">{item.label}</span>
     </Link>
   );
 }
