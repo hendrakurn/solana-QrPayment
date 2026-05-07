@@ -53,7 +53,7 @@ export default function SuccessPage() {
       </main>
 
       <footer className="px-edge pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3">
-        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
+        <div className="mx-auto flex w-full max-w-canvas-inner flex-col gap-3">
           <Link
             href="/"
             className="inline-flex h-tap w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"

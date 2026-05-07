@@ -47,7 +47,7 @@ export function BottomNav() {
       aria-label="Navigasi utama"
       className="fixed inset-x-0 bottom-0 z-40 pb-[max(env(safe-area-inset-bottom),16px)] pt-3 px-4 pointer-events-none"
     >
-      <div className="pointer-events-auto mx-auto flex w-full max-w-[440px] items-center justify-between rounded-2xl border border-white/8 bg-surface-low/85 px-3 py-2 backdrop-blur-xl shadow-[var(--shadow-nav)]">
+      <div className="pointer-events-auto mx-auto flex w-full max-w-canvas-inner items-center justify-between rounded-2xl border border-white/8 bg-surface-low/85 px-3 py-2 backdrop-blur-xl shadow-[var(--shadow-nav)]">
         {items.slice(0, 1).map((item) => (
           <NavButton key={item.href} item={item} active={item.match(pathname)} />
         ))}

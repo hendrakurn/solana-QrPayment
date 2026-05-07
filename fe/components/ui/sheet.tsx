@@ -43,7 +43,7 @@ export function Sheet({ open, onClose, title, children, className }: SheetProps)
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "relative w-full max-w-[480px] bg-surface-2 border border-border rounded-t-2xl sm:rounded-2xl shadow-[var(--shadow-card-strong)] animate-rise",
+          "relative w-full max-w-canvas bg-surface-2 border border-border rounded-t-2xl sm:rounded-2xl shadow-[var(--shadow-card-strong)] animate-rise",
           className,
         )}
       >

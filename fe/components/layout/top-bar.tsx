@@ -43,7 +43,7 @@ export function TopBar({
       <div
         className={cn(
           "mx-auto flex w-full items-center justify-between gap-3",
-          isFixed ? "max-w-[480px] px-edge py-3" : "",
+          isFixed ? "max-w-canvas px-edge py-3" : "",
         )}
       >
         <div className="flex items-center gap-3 min-w-0">

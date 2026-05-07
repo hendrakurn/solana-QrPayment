@@ -72,7 +72,7 @@ export default function ConfirmPage() {
 
       {/* Sticky bottom — slide-to-pay (preserved interaction) */}
       <footer className="fixed inset-x-0 bottom-0 z-30 px-edge pt-3 pb-[calc(env(safe-area-inset-bottom)+20px)] border-t border-white/8 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto w-full max-w-[440px]">
+        <div className="mx-auto w-full max-w-canvas-inner">
           <SlideToPay
             label={`Geser untuk bayar Rp ${mockPaymentDraft.amountIdr.toLocaleString("id-ID")}`}
             confirmedLabel="Memproses pembayaran…"

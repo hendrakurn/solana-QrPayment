@@ -19,7 +19,7 @@ export function AppShell({
   return (
     <div className="min-h-dvh w-full bg-background">
       <DesktopBackdrop />
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col">
+      <div className="relative mx-auto flex min-h-dvh w-full max-w-canvas flex-col">
         <main
           className={cn(
             "flex-1 px-edge pb-[calc(112px+env(safe-area-inset-bottom))]",
@@ -66,7 +66,7 @@ export function ImmersiveShell({
     <div className="min-h-dvh w-full bg-background text-foreground">
       <div
         className={cn(
-          "relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col",
+          "relative mx-auto flex min-h-dvh w-full max-w-canvas flex-col",
           className,
         )}
       >
