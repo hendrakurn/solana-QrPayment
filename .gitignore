@@ -13,3 +13,7 @@ out/
 # production
 build/
 dist/
+
+/strategy
+
+.claude/
