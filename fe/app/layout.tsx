@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
+import { SolanaProvider } from "@/components/providers/solana-provider";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -31,7 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${outfit.variable} h-full antialiased`}>
-      <body className="min-h-full bg-background text-foreground">{children}</body>
+      <body className="min-h-full bg-background text-foreground">
+        <SolanaProvider>{children}</SolanaProvider>
+      </body>
     </html>
   );
 }

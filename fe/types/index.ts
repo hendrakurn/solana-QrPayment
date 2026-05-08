@@ -13,6 +13,12 @@ export interface Wallet {
   useCount: number;
   isDefault?: boolean;
   address: string;
+  /**
+   * When true, the wallet is rendered as a disabled placeholder ("Segera hadir").
+   * Used for stablecoins not yet supported by the on-chain program (USDT/PYUSD/USDG
+   * — the SolPay vault currently only accepts USDC).
+   */
+  comingSoon?: boolean;
 }
 
 export type TransactionStatus = "success" | "pending" | "failed";

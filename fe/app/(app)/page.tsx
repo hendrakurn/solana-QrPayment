@@ -1,23 +1,19 @@
 import Link from "next/link";
 import { TopBar } from "@/components/layout/top-bar";
-import { Avatar } from "@/components/layout/avatar";
+import { TopBarLeading } from "@/components/layout/top-bar-leading";
 import { IconButton } from "@/components/ui/icon-button";
 import { SectionTitle } from "@/components/ui/section-title";
 import { SearchIcon } from "@/components/icons";
-import { BalanceCard } from "@/components/home/balance-card";
+import { BalanceCardLive } from "@/components/home/balance-card-live";
 import { TapToPay } from "@/components/home/tap-to-pay";
 import { AiSuggestion } from "@/components/home/ai-suggestion";
 import { QuickActions } from "@/components/home/quick-actions";
 import { TransactionRow } from "@/components/transactions/transaction-row";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
-import { mockUser } from "@/data/user";
-import { mockWallets, totalFiatBalance } from "@/data/wallets";
 import { mockTransactions } from "@/data/transactions";
 import { formatRupiah } from "@/lib/format";
 
 export default function HomePage() {
-  const total = totalFiatBalance(mockWallets);
-  const trend = mockWallets.reduce((s, w) => s + w.trend24h * w.fiatValue, 0) / total;
   const recent = mockTransactions.slice(0, 3);
 
   return (
@@ -25,15 +21,7 @@ export default function HomePage() {
       <MotionItem>
         <TopBar
           showWordmark
-          leading={
-            <Link
-              href="/settings"
-              aria-label="Buka pengaturan"
-              className="cursor-pointer rounded-pill"
-            >
-              <Avatar initials={mockUser.avatarSeed} />
-            </Link>
-          }
+          leading={<TopBarLeading />}
           trailing={
             <IconButton
               variant="ghost"
@@ -45,7 +33,7 @@ export default function HomePage() {
       </MotionItem>
 
       <MotionItem>
-        <BalanceCard totalIdr={total} walletCount={mockWallets.length} trend24h={trend} />
+        <BalanceCardLive />
       </MotionItem>
 
       <MotionItem>
