@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ScannerFrame } from "@/components/scanner/scanner-frame";
 import { Sheet } from "@/components/ui/sheet";
@@ -11,11 +12,23 @@ import {
   HelpIcon,
   SparklesIcon,
 } from "@/components/icons";
+import { usePaymentDraft } from "@/lib/payment/draft-store";
+import { mockPaymentDraft } from "@/data/payment";
 import { cn } from "@/lib/utils";
 
 export default function ScanPage() {
+  const router = useRouter();
+  const setDraft = usePaymentDraft((s) => s.setDraft);
   const [flash, setFlash] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+
+  // Until the real QRIS decoder lands (uses @zxing/library on a real <video>),
+  // the simulate button hands the mock draft to the confirm page so the rest
+  // of the flow exercises the live on-chain path.
+  function handleSimulateScan() {
+    setDraft(mockPaymentDraft);
+    router.push("/pay/confirm");
+  }
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-background text-foreground select-none">
@@ -79,13 +92,14 @@ export default function ScanPage() {
           />
         </div>
 
-        <Link
-          href="/pay/confirm"
+        <button
+          type="button"
+          onClick={handleSimulateScan}
           className="mt-8 inline-flex h-tap w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft active:bg-primary-deep cursor-pointer transition-colors duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <SparklesIcon className="size-4" />
           Simulasi: tampilkan QRIS terdeteksi
-        </Link>
+        </button>
       </div>
 
       <Sheet open={helpOpen} onClose={() => setHelpOpen(false)} title="Tips pemindaian">

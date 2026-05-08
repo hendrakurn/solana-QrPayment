@@ -1,14 +1,42 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import { CheckIcon, ZapIcon, ArrowUpRightIcon } from "@/components/icons";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
-import { mockPaymentDraft } from "@/data/payment";
-import { mockWallets } from "@/data/wallets";
-import { formatRupiah, formatStable } from "@/lib/format";
+import { useLastPaymentStore } from "@/lib/payment/last-payment-store";
+import { SOLANA_CLUSTER } from "@/lib/solana/config";
+import { formatRupiah, formatStable, truncateAddress } from "@/lib/format";
 
 export default function SuccessPage() {
-  const wallet = mockWallets.find((w) => w.id === mockPaymentDraft.recommendedWalletId)!;
-  const totalIdr = mockPaymentDraft.amountIdr + mockPaymentDraft.feeIdr;
-  const totalStable = totalIdr / mockPaymentDraft.rate;
+  const last = useLastPaymentStore((s) => s.last);
+
+  // Defensive: if user navigates here directly without a recent payment,
+  // bounce back to home rather than showing stale data.
+  useEffect(() => {
+    if (!last) return;
+    // No-op: keep the page if there's a payment to display
+  }, [last]);
+
+  if (!last) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center px-edge text-center gap-4">
+        <p className="text-body text-foreground-muted">
+          Tidak ada pembayaran terbaru untuk ditampilkan.
+        </p>
+        <Link
+          href="/"
+          className="inline-flex h-tap items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"
+        >
+          Kembali ke beranda
+        </Link>
+      </div>
+    );
+  }
+
+  const totalIdr = last.draft.amountIdr + last.draft.feeIdr;
+  const totalStable = last.amountUsdc;
+  const explorerUrl = `https://explorer.solana.com/tx/${last.signature}?cluster=${SOLANA_CLUSTER}`;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -31,15 +59,15 @@ export default function SuccessPage() {
           as="div"
           className="text-display font-semibold tracking-tight text-foreground"
         >
-          <h1>Pembayaran berhasil</h1>
+          <h1>Pembayaran terkirim</h1>
         </MotionItem>
 
         <MotionItem
           as="p"
-          className="mt-2 max-w-[32ch] text-body text-foreground-muted"
+          className="mt-2 max-w-[34ch] text-body text-foreground-muted"
         >
-          {mockPaymentDraft.merchant.name} telah menerima settlement Rupiah lewat
-          jalur QRIS resmi.
+          USDC sudah dikirim ke vault SolPay. Settlement IDR ke{" "}
+          {last.draft.merchant.name} akan menyusul lewat jalur QRIS.
         </MotionItem>
 
         <MotionItem
@@ -50,7 +78,9 @@ export default function SuccessPage() {
             <span className="text-caption uppercase tracking-[0.18em] text-foreground-muted">
               Total dibayar
             </span>
-            <span className="text-caption text-foreground-subtle">QRIS · Solana Pay</span>
+            <span className="text-caption text-foreground-subtle">
+              QRIS · Solana {SOLANA_CLUSTER}
+            </span>
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
             <span className="text-section text-primary font-semibold">Rp</span>
@@ -59,18 +89,38 @@ export default function SuccessPage() {
             </span>
           </div>
           <p className="mt-1 text-body-sm text-foreground-muted tabular-nums">
-            {formatStable(totalStable, wallet.symbol)} dari {wallet.label}
+            {formatStable(totalStable, last.symbol)}
           </p>
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-pill bg-success/14 px-3 py-1.5 text-caption font-medium text-success">
             <ZapIcon className="size-3.5" />
-            Diselesaikan dalam 6,2 detik
+            Tertulis on-chain
           </div>
+
+          <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-caption">
+            <dt className="text-foreground-subtle">Tx</dt>
+            <dd className="font-mono tabular-nums text-foreground truncate">
+              {truncateAddress(last.signature, 6, 6)}
+            </dd>
+            <dt className="text-foreground-subtle">Record</dt>
+            <dd className="font-mono tabular-nums text-foreground truncate">
+              {truncateAddress(last.paymentPda, 4, 4)}
+            </dd>
+          </dl>
         </MotionItem>
       </MotionSection>
 
       <footer className="px-edge pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3">
         <div className="mx-auto flex w-full max-w-canvas-inner flex-col gap-3">
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border-strong/60 bg-surface px-5 text-body-sm font-semibold text-foreground hover:bg-surface-2 cursor-pointer transition-colors"
+          >
+            Lihat di Solana Explorer
+            <ArrowUpRightIcon className="size-4" />
+          </a>
           <Link
             href="/"
             className="inline-flex h-tap w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"

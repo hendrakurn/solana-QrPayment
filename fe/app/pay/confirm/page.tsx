@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { CloseIcon, SparklesIcon } from "@/components/icons";
 import { Wordmark } from "@/components/layout/wordmark";
 import { MerchantCard } from "@/components/pay/merchant-card";
@@ -10,14 +11,106 @@ import { AmountDisplay } from "@/components/pay/amount-display";
 import { WalletSelector } from "@/components/pay/wallet-selector";
 import { TotalBreakdown } from "@/components/pay/total-breakdown";
 import { SlideToPay } from "@/components/pay/slide-to-pay";
+import { ConnectButton } from "@/components/wallet/connect-button";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
-import { mockWallets } from "@/data/wallets";
-import { mockPaymentDraft } from "@/data/payment";
+import { usePaymentDraft } from "@/lib/payment/draft-store";
+import { useLastPaymentStore } from "@/lib/payment/last-payment-store";
+import { useUsdcBalance } from "@/lib/solana/use-usdc-balance";
+import { getSolpayProgram } from "@/lib/solana/program";
+import { executePayment } from "@/lib/solana/pay";
+import { parseSolpayError } from "@/lib/solana/errors";
+import type { Wallet } from "@/types";
 
 export default function ConfirmPage() {
   const router = useRouter();
-  const [walletId, setWalletId] = useState(mockPaymentDraft.recommendedWalletId);
-  const wallet = mockWallets.find((w) => w.id === walletId)!;
+  const draft = usePaymentDraft((s) => s.draft);
+  const setLastPayment = useLastPaymentStore((s) => s.set);
+  const { connection } = useConnection();
+  const wallet = useWallet();
+  const { uiAmount: balanceUsdc, loading: balLoading } = useUsdcBalance();
+
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  // Bumping this remounts <SlideToPay/> so the user can re-attempt after a failure
+  // (the slider locks itself after `confirmed` and has no external reset prop).
+  const [resetKey, setResetKey] = useState(0);
+
+  // Single-wallet list (USDC only) so the existing WalletSelector UI stays
+  // intact. Other stablecoins are surfaced as "Segera hadir" on /wallet.
+  const usdcWallet = useMemo<Wallet | null>(() => {
+    if (!wallet.publicKey) return null;
+    return {
+      id: "w-usdc",
+      symbol: "USDC",
+      network: "Solana Devnet",
+      label: "USDC Devnet",
+      balance: balanceUsdc,
+      fiatValue: Math.round(balanceUsdc * draft.rate),
+      apr: 4.8,
+      trend24h: 0,
+      lastUsedAt: new Date(),
+      useCount: 0,
+      isDefault: true,
+      address: wallet.publicKey.toBase58(),
+    };
+  }, [wallet.publicKey, balanceUsdc, draft.rate]);
+
+  const program = useMemo(
+    () => getSolpayProgram(connection, wallet),
+    // Stable deps: avoid object identity churn on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [connection, wallet.publicKey?.toBase58(), wallet.connected],
+  );
+
+  const amountUsdcRequired = draft.amountIdr / draft.rate;
+  const totalIdr = draft.amountIdr + draft.feeIdr;
+  const totalUsdcRequired = totalIdr / draft.rate;
+  const connected = wallet.connected && !!wallet.publicKey;
+  const insufficientBalance =
+    connected && !balLoading && balanceUsdc < totalUsdcRequired;
+  const slideDisabled =
+    !connected || !program || insufficientBalance || busy || balLoading;
+
+  async function handleConfirm() {
+    setError(null);
+    if (!program || !wallet.publicKey) {
+      setError("Hubungkan dompet Phantom dulu.");
+      setResetKey((k) => k + 1);
+      return;
+    }
+    if (insufficientBalance) {
+      setError("Saldo USDC tidak cukup. Top-up dulu di halaman Wallet.");
+      setResetKey((k) => k + 1);
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const result = await executePayment({
+        program,
+        payer: wallet.publicKey,
+        amountUsdc: totalUsdcRequired,
+        amountIdr: totalIdr,
+        merchantId: (draft.merchant.qrisId || draft.merchant.name || "MERCHANT").slice(0, 32),
+        xenditReference: crypto.randomUUID(),
+      });
+
+      setLastPayment({
+        signature: result.signature,
+        paymentPda: result.paymentPda,
+        draft,
+        amountUsdc: totalUsdcRequired,
+        symbol: "USDC",
+        timestamp: Date.now(),
+      });
+
+      router.push("/pay/success");
+    } catch (e) {
+      setError(parseSolpayError(e));
+      setResetKey((k) => k + 1);
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -41,24 +134,34 @@ export default function ConfirmPage() {
         className="flex-1 flex flex-col gap-6 px-edge pt-6 pb-40"
       >
         <MotionItem>
-          <MerchantCard merchant={mockPaymentDraft.merchant} />
+          <MerchantCard merchant={draft.merchant} />
         </MotionItem>
 
         <MotionItem>
           <AmountDisplay
-            amountIdr={mockPaymentDraft.amountIdr}
-            helper={`≈ ${(mockPaymentDraft.amountIdr / mockPaymentDraft.rate).toFixed(2)} ${wallet.symbol}`}
+            amountIdr={draft.amountIdr}
+            helper={`≈ ${amountUsdcRequired.toFixed(2)} USDC`}
           />
         </MotionItem>
 
         <MotionItem as="section" className="flex flex-col gap-3">
-          <h3 className="text-body font-semibold text-foreground">Pilih sumber dana</h3>
-          <WalletSelector
-            wallets={mockWallets}
-            selectedId={walletId}
-            recommendedId={mockPaymentDraft.recommendedWalletId}
-            onChange={setWalletId}
-          />
+          <h3 className="text-body font-semibold text-foreground">Sumber dana</h3>
+
+          {!connected ? (
+            <div className="flex flex-col items-start gap-3 rounded-xl border border-border-strong/60 bg-surface p-4">
+              <p className="text-body-sm text-foreground-muted">
+                Hubungkan dompet Phantom untuk membayar dengan USDC kamu.
+              </p>
+              <ConnectButton />
+            </div>
+          ) : usdcWallet ? (
+            <WalletSelector
+              wallets={[usdcWallet]}
+              selectedId="w-usdc"
+              recommendedId="w-usdc"
+              onChange={() => {}}
+            />
+          ) : null}
         </MotionItem>
 
         <MotionItem
@@ -70,33 +173,59 @@ export default function ConfirmPage() {
           </span>
           <p className="text-body-sm leading-5 text-foreground-muted">
             <span className="text-foreground font-semibold">SolPay AI:</span>{" "}
-            {wallet.symbol} memberi rate paling kompetitif untuk transaksi ini
-            dan tetap menjaga posisi yield-mu di Solana.
+            USDC memberi rate paling kompetitif di Solana devnet untuk
+            transaksi ini.
           </p>
         </MotionItem>
 
         <MotionItem>
           <TotalBreakdown
-            amountIdr={mockPaymentDraft.amountIdr}
-            feeIdr={mockPaymentDraft.feeIdr}
-            rate={mockPaymentDraft.rate}
-            symbol={wallet.symbol}
+            amountIdr={draft.amountIdr}
+            feeIdr={draft.feeIdr}
+            rate={draft.rate}
+            symbol="USDC"
           />
         </MotionItem>
+
+        {insufficientBalance && (
+          <MotionItem
+            as="div"
+            className="rounded-xl border border-warning/40 bg-warning/10 p-3.5 text-body-sm text-warning"
+          >
+            Saldo USDC kamu tidak cukup ({balanceUsdc.toFixed(2)} USDC) untuk
+            pembayaran ini ({totalUsdcRequired.toFixed(2)} USDC).{" "}
+            <Link href="/wallet/add" className="font-semibold underline">
+              Top-up dulu
+            </Link>
+            .
+          </MotionItem>
+        )}
+
+        {error && (
+          <MotionItem
+            as="div"
+            role="alert"
+            className="rounded-xl border border-danger/40 bg-danger/10 p-3.5 text-body-sm text-danger"
+          >
+            {error}
+          </MotionItem>
+        )}
       </MotionSection>
 
       {/* Sticky bottom — slide-to-pay (preserved interaction) */}
       <footer className="fixed inset-x-0 bottom-0 z-30 px-edge pt-3 pb-[calc(env(safe-area-inset-bottom)+20px)] border-t border-white/8 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto w-full max-w-canvas-inner">
           <SlideToPay
-            label={`Geser untuk bayar Rp ${mockPaymentDraft.amountIdr.toLocaleString("id-ID")}`}
+            key={resetKey}
+            label={`Geser untuk bayar Rp ${totalIdr.toLocaleString("id-ID")}`}
             confirmedLabel="Memproses pembayaran…"
-            onConfirm={() => {
-              setTimeout(() => router.push("/pay/success"), 700);
-            }}
+            disabled={slideDisabled}
+            onConfirm={handleConfirm}
           />
           <p className="mt-3 text-center text-caption text-foreground-subtle">
-            Dilindungi oleh autentikasi biometrik · KYC level 2
+            {connected
+              ? `Devnet · ${draft.merchant.name}`
+              : "Hubungkan Phantom dulu sebelum membayar"}
           </p>
         </div>
       </footer>
