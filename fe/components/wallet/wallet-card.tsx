@@ -6,6 +6,8 @@ import { TrendUpIcon, TrendDownIcon } from "@/components/icons";
 import { formatRupiah, formatStable, formatPercent, truncateAddress } from "@/lib/format";
 
 export function WalletCard({ wallet }: { wallet: Wallet }) {
+  if (wallet.comingSoon) return <ComingSoonCard wallet={wallet} />;
+
   const positive = wallet.trend24h >= 0;
   return (
     <Link
@@ -47,5 +49,35 @@ export function WalletCard({ wallet }: { wallet: Wallet }) {
         </p>
       </div>
     </Link>
+  );
+}
+
+/**
+ * Non-interactive variant for stablecoins not yet supported by the on-chain
+ * program (USDT/PYUSD/USDG). Same shape as the live card so the list reads
+ * uniformly, but visually muted with a "Segera hadir" badge.
+ */
+function ComingSoonCard({ wallet }: { wallet: Wallet }) {
+  return (
+    <div
+      aria-disabled="true"
+      className="flex items-center gap-4 rounded-xl border border-border bg-surface/60 p-4 opacity-60"
+    >
+      <TokenMark symbol={wallet.symbol} size="lg" className="grayscale-[40%]" />
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="text-body font-semibold text-foreground truncate">{wallet.label}</p>
+          <Badge tone="neutral">Segera hadir</Badge>
+        </div>
+        <p className="text-caption text-foreground-subtle truncate">
+          {wallet.symbol} · Belum tersedia di program SolPay
+        </p>
+      </div>
+
+      <div className="text-right shrink-0">
+        <p className="text-caption text-foreground-subtle">APR {wallet.apr ?? 0}%</p>
+      </div>
+    </div>
   );
 }
