@@ -65,7 +65,7 @@ export function MintUsdcButton({ onSuccess }: { onSuccess?: () => void }) {
           ? "Requesting USDC…"
           : status === "success"
             ? "10 USDC sent to your wallet!"
-            : "Get 10 Test USDC (Devnet Faucet)"}
+            : "Get 10 Free USDC"}
       </button>
       {error && (
         <p className="text-caption text-danger text-center px-1">{error}</p>

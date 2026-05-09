@@ -32,7 +32,7 @@ export function parseSolpayError(err: unknown): string {
       return "Insufficient SOL to cover transaction fees.";
     }
     if (/Account does not exist/i.test(msg) && /vault/i.test(msg)) {
-      return "Vault not yet initialized on devnet.";
+      return "Vault not yet initialized. Contact support.";
     }
     const codeMatch = msg.match(/Error Code: (\w+)\./);
     if (codeMatch && MESSAGES[codeMatch[1]]) {

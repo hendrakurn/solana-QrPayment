@@ -1,93 +1,148 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { TopBar } from "@/components/layout/top-bar";
-import { TopBarLeading } from "@/components/layout/top-bar-leading";
 import { IconButton } from "@/components/ui/icon-button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WalletList } from "@/components/wallet/wallet-list";
-import { ConnectButton } from "@/components/wallet/connect-button";
+import { WalletCard } from "@/components/wallet/wallet-card";
 import { MintUsdcButton } from "@/components/wallet/mint-usdc-button";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
-import { RefreshIcon } from "@/components/icons";
+import { RefreshIcon, UserIcon, LogOutIcon } from "@/components/icons";
 import { useWalletList } from "@/lib/solana/use-wallet-list";
 import { useUsdcBalance } from "@/lib/solana/use-usdc-balance";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiah, truncateAddress } from "@/lib/format";
+import { Avatar } from "@/components/layout/avatar";
 
 export function WalletPageContent() {
   const { wallets, totalIdr, loading, error, connected } = useWalletList();
   const { refetch } = useUsdcBalance();
+  const { publicKey, disconnect } = useWallet();
+  const { setVisible } = useWalletModal();
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    if (!publicKey) return;
+    navigator.clipboard.writeText(publicKey.toBase58()).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <MotionSection stagger immediate className="flex flex-col gap-6">
       <MotionItem>
         <TopBar
           showWordmark
-          leading={<TopBarLeading />}
           trailing={
-            <IconButton
-              variant="ghost"
-              label="Refresh balance"
-              icon={<RefreshIcon className="size-5 text-primary" />}
-              onClick={() => refetch()}
-            />
+            connected ? (
+              <IconButton
+                variant="ghost"
+                label="Refresh balance"
+                icon={<RefreshIcon className="size-5 text-primary" />}
+                onClick={() => refetch()}
+              />
+            ) : undefined
           }
         />
       </MotionItem>
 
-      {/* Balance hero */}
-      <MotionItem
-        as="section"
-        className="flex flex-col items-center justify-center text-center py-4"
-      >
-        <p className="text-caption uppercase tracking-[0.2em] text-foreground-subtle font-medium">
-          Total Balance
-        </p>
-
-        {!connected ? (
-          <div className="mt-4 flex flex-col items-center gap-3">
-            <p className="text-body-sm text-foreground-muted">
-              Connect your wallet to view balance
+      {!connected ? (
+        /* ── Disconnected state ── */
+        <MotionItem
+          as="section"
+          className="flex flex-col items-center justify-center text-center gap-6 py-16"
+        >
+          <span className="inline-flex size-24 items-center justify-center rounded-3xl border border-border-strong/60 bg-surface-2 text-foreground-muted">
+            <UserIcon className="size-12" />
+          </span>
+          <div>
+            <h2 className="text-section font-semibold text-foreground">Connect Wallet</h2>
+            <p className="mt-1 text-body-sm text-foreground-muted">
+              Connect your Phantom wallet to view balance
             </p>
-            <ConnectButton />
           </div>
-        ) : loading && totalIdr === 0 ? (
-          <Skeleton className="mt-3 h-12 w-60" />
-        ) : error ? (
-          <p className="mt-3 max-w-[34ch] text-body-sm text-danger">
-            {error}
-          </p>
-        ) : (
-          <h2 className="mt-2 text-display-xl font-semibold tabular-nums tracking-tight">
-            {formatRupiah(totalIdr)}
-          </h2>
-        )}
-      </MotionItem>
-
-      {/* Devnet USDC faucet — primary CTA for judges */}
-      {connected && (
-        <MotionItem>
-          <MintUsdcButton onSuccess={() => refetch()} />
-        </MotionItem>
-      )}
-
-      {/* Wallet list */}
-      {connected && wallets.length > 0 && (
-        <MotionItem>
-          <WalletList wallets={wallets} />
-        </MotionItem>
-      )}
-
-      {/* Add wallet */}
-      {connected && (
-        <MotionItem>
-          <Link
-            href="/wallet/add"
-            className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong/60 bg-transparent py-4 text-body-sm font-medium text-foreground-subtle hover:bg-surface hover:text-foreground hover:border-border-strong cursor-pointer transition-colors"
+          <button
+            type="button"
+            onClick={() => setVisible(true)}
+            className="inline-flex h-tap items-center justify-center gap-2 rounded-xl bg-primary px-8 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"
           >
-            + Add stablecoin
-          </Link>
+            Connect Phantom
+          </button>
         </MotionItem>
+      ) : (
+        <>
+          {/* ── Profile hero ── */}
+          <MotionItem as="section" className="flex flex-col items-center gap-3 py-2">
+            <Avatar
+              initials={publicKey?.toBase58().slice(0, 2) ?? "?"}
+              size={72}
+            />
+
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-1.5 text-caption font-mono text-foreground-subtle hover:text-foreground transition-colors cursor-pointer"
+            >
+              {copied
+                ? "Copied!"
+                : `${truncateAddress(publicKey?.toBase58() ?? "", 6, 4)} · tap to copy`}
+            </button>
+
+            <span className="inline-flex items-center gap-1.5 rounded-pill border border-success/30 bg-success/10 px-3 py-1 text-caption text-success">
+              <span aria-hidden className="size-1.5 rounded-pill bg-success" />
+              Solana
+            </span>
+          </MotionItem>
+
+          {/* ── Balance ── */}
+          <MotionItem
+            as="section"
+            className="flex flex-col items-center justify-center text-center"
+          >
+            <p className="text-caption uppercase tracking-[0.2em] text-foreground-subtle font-medium">
+              Total Balance
+            </p>
+
+            {loading && totalIdr === 0 ? (
+              <Skeleton className="mt-3 h-12 w-60" />
+            ) : error ? (
+              <p className="mt-3 max-w-[34ch] text-body-sm text-danger">{error}</p>
+            ) : (
+              <h2 className="mt-2 text-display-xl font-semibold tabular-nums tracking-tight">
+                {formatRupiah(totalIdr)}
+              </h2>
+            )}
+          </MotionItem>
+
+          {/* ── Faucet ── */}
+          <MotionItem>
+            <MintUsdcButton onSuccess={() => refetch()} />
+          </MotionItem>
+
+          {/* ── Wallet card ── */}
+          {wallets.length > 0 && (
+            <MotionItem as="ul" className="flex flex-col gap-2.5">
+              {wallets.map((w) => (
+                <li key={w.id} id={w.id}>
+                  <WalletCard wallet={w} />
+                </li>
+              ))}
+            </MotionItem>
+          )}
+
+          {/* ── Disconnect ── */}
+          <MotionItem>
+            <button
+              type="button"
+              onClick={() => disconnect().catch(() => {})}
+              className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-danger/40 bg-danger/8 text-body font-semibold text-danger hover:bg-danger/14 cursor-pointer transition-colors"
+            >
+              <LogOutIcon className="size-5" />
+              Disconnect Wallet
+            </button>
+          </MotionItem>
+        </>
       )}
     </MotionSection>
   );

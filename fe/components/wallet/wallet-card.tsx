@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Wallet } from "@/types";
 import { TokenMark } from "@/components/ui/token-mark";
-import { Badge } from "@/components/ui/badge";
 import { TrendUpIcon, TrendDownIcon } from "@/components/icons";
 import { formatRupiah, formatStable, formatPercent, truncateAddress } from "@/lib/format";
 
@@ -17,7 +16,6 @@ export function WalletCard({ wallet }: { wallet: Wallet }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="text-body font-semibold text-foreground truncate">{wallet.label}</p>
-          {wallet.isDefault ? <Badge tone="primary">Default</Badge> : null}
         </div>
         <p className="text-caption text-foreground-subtle font-mono tabular-nums truncate">
           {wallet.symbol} · {truncateAddress(wallet.address)}

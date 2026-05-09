@@ -34,8 +34,8 @@ export function useWalletList(): WalletListState {
     const live: Wallet = {
       id: "w-usdc",
       symbol: "USDC",
-      network: "Solana Devnet",
-      label: "USDC Devnet",
+      network: "Solana",
+      label: "USDC",
       balance: uiAmount,
       fiatValue: usdcFiat,
       apr: 4.8,

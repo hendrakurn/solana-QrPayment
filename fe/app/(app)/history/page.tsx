@@ -15,7 +15,7 @@ export default function HistoryPage() {
         <TopBar
           showWordmark
           leading={
-            <Link href="/settings" aria-label="Open settings">
+            <Link href="/wallet" aria-label="Open wallet">
               <Avatar initials={mockUser.avatarSeed} />
             </Link>
           }

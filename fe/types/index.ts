@@ -3,7 +3,7 @@ export type StablecoinSymbol = "USDC";
 export interface Wallet {
   id: string;
   symbol: StablecoinSymbol;
-  network: "Solana" | "Solana Devnet";
+  network: "Solana";
   label: string;
   balance: number;
   fiatValue: number;

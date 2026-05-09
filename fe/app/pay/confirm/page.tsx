@@ -41,8 +41,8 @@ export default function ConfirmPage() {
     return {
       id: "w-usdc",
       symbol: "USDC",
-      network: "Solana Devnet",
-      label: "USDC Devnet",
+      network: "Solana",
+      label: "USDC",
       balance: balanceUsdc,
       fiatValue: Math.round(balanceUsdc * draft.rate),
       apr: 4.8,
@@ -210,7 +210,7 @@ export default function ConfirmPage() {
           />
           <p className="mt-3 text-center text-caption text-foreground-subtle">
             {connected
-              ? `Devnet · ${draft.merchant.name}`
+              ? draft.merchant.name
               : "Connect Phantom wallet before paying"}
           </p>
         </div>

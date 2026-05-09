@@ -79,7 +79,7 @@ export default function SuccessPage() {
               Total paid
             </span>
             <span className="text-caption text-foreground-subtle">
-              QRIS · Solana {SOLANA_CLUSTER}
+              QRIS · Solana
             </span>
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
