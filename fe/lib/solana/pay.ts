@@ -1,6 +1,7 @@
 import { Program, Idl, BN } from "@coral-xyz/anchor";
 import {
   ComputeBudgetProgram,
+  Connection,
   PublicKey,
   type TransactionInstruction,
 } from "@solana/web3.js";
@@ -14,6 +15,8 @@ import { fetchVault } from "./vault";
 
 export interface PayParams {
   program: Program<Idl>;
+  /** Phantom's native sendTransaction — always uses the currently active account. */
+  sendTransaction: (tx: import("@solana/web3.js").Transaction, conn: Connection) => Promise<string>;
   payer: PublicKey;
   /** Human units, e.g. 2.71 means 2.71 USDC. Will be scaled by 10^6 internally. */
   amountUsdc: number;
@@ -86,8 +89,10 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   const amountUsdcRaw = new BN(Math.round(p.amountUsdc * 10 ** USDC_DECIMALS));
   const amountIdrBn = new BN(p.amountIdr);
 
-  // 4. Send. Phantom popup happens inside `.rpc()`.
-  const sig = await p.program.methods
+  // 4. Build the transaction, then send via wallet.sendTransaction so Phantom
+  //    always signs with the currently active account — avoiding stale-provider
+  //    signature mismatches when the user reconnects or switches accounts.
+  const tx = await p.program.methods
     .createPayment(amountUsdcRaw, amountIdrBn, p.merchantId, p.xenditReference)
     .accounts({
       payer: p.payer,
@@ -99,7 +104,14 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
       // tokenProgram + systemProgram resolved via IDL `address` constants
     })
     .preInstructions(preInstructions)
-    .rpc({ commitment: "confirmed" });
+    .transaction();
+
+  const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
+  tx.recentBlockhash = blockhash;
+  tx.feePayer = p.payer;
+
+  const sig = await p.sendTransaction(tx, conn);
+  await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
 
   return {
     signature: sig,

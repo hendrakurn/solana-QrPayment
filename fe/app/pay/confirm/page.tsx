@@ -88,6 +88,7 @@ export default function ConfirmPage() {
     try {
       const result = await executePayment({
         program,
+        sendTransaction: wallet.sendTransaction,
         payer: wallet.publicKey,
         amountUsdc: totalUsdcRequired,
         amountIdr: totalIdr,
