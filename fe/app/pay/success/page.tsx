@@ -22,13 +22,13 @@ export default function SuccessPage() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center px-edge text-center gap-4">
         <p className="text-body text-foreground-muted">
-          Tidak ada pembayaran terbaru untuk ditampilkan.
+          No recent payment to display.
         </p>
         <Link
           href="/"
           className="inline-flex h-tap items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"
         >
-          Kembali ke beranda
+          Back to home
         </Link>
       </div>
     );
@@ -59,15 +59,15 @@ export default function SuccessPage() {
           as="div"
           className="text-display font-semibold tracking-tight text-foreground"
         >
-          <h1>Pembayaran terkirim</h1>
+          <h1>Payment sent</h1>
         </MotionItem>
 
         <MotionItem
           as="p"
           className="mt-2 max-w-[34ch] text-body text-foreground-muted"
         >
-          USDC sudah dikirim ke vault SolPay. Settlement IDR ke{" "}
-          {last.draft.merchant.name} akan menyusul lewat jalur QRIS.
+          USDC has been sent to the SolPay vault. IDR settlement to{" "}
+          {last.draft.merchant.name} will follow via QRIS.
         </MotionItem>
 
         <MotionItem
@@ -76,7 +76,7 @@ export default function SuccessPage() {
         >
           <div className="flex items-baseline justify-between">
             <span className="text-caption uppercase tracking-[0.18em] text-foreground-muted">
-              Total dibayar
+              Total paid
             </span>
             <span className="text-caption text-foreground-subtle">
               QRIS · Solana {SOLANA_CLUSTER}
@@ -94,7 +94,7 @@ export default function SuccessPage() {
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-pill bg-success/14 px-3 py-1.5 text-caption font-medium text-success">
             <ZapIcon className="size-3.5" />
-            Tertulis on-chain
+            Written on-chain
           </div>
 
           <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-caption">
@@ -118,20 +118,20 @@ export default function SuccessPage() {
             rel="noopener noreferrer"
             className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border-strong/60 bg-surface px-5 text-body-sm font-semibold text-foreground hover:bg-surface-2 cursor-pointer transition-colors"
           >
-            Lihat di Solana Explorer
+            View on Solana Explorer
             <ArrowUpRightIcon className="size-4" />
           </a>
           <Link
             href="/"
             className="inline-flex h-tap w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"
           >
-            Kembali ke beranda
+            Back to home
           </Link>
           <Link
             href="/history"
             className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border-strong/60 bg-surface px-5 text-body-sm font-semibold text-foreground hover:bg-surface-2 cursor-pointer transition-colors"
           >
-            Lihat di riwayat
+            View in history
             <ArrowUpRightIcon className="size-4" />
           </Link>
         </div>

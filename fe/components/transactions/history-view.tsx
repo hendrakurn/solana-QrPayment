@@ -11,10 +11,10 @@ import { TransactionGroup } from "./transaction-group";
 type Filter = "all" | TransactionStatus;
 
 const filters: { id: Filter; label: string }[] = [
-  { id: "all", label: "Semua" },
-  { id: "success", label: "Berhasil" },
-  { id: "pending", label: "Menunggu" },
-  { id: "failed", label: "Gagal" },
+  { id: "all", label: "All" },
+  { id: "success", label: "Success" },
+  { id: "pending", label: "Pending" },
+  { id: "failed", label: "Failed" },
 ];
 
 export function HistoryView({ transactions }: { transactions: Transaction[] }) {
@@ -44,9 +44,9 @@ export function HistoryView({ transactions }: { transactions: Transaction[] }) {
           : tx.occurredAt.toDateString();
       const label =
         group === "today"
-          ? "Hari ini"
+          ? "Today"
           : group === "yesterday"
-          ? "Kemarin"
+          ? "Yesterday"
           : formatDateLong(tx.occurredAt);
       const bucket = buckets.get(key) ?? { label, items: [] };
       bucket.items.push(tx);
@@ -58,11 +58,11 @@ export function HistoryView({ transactions }: { transactions: Transaction[] }) {
   return (
     <div className="flex flex-col gap-5">
       <label className="relative block">
-        <span className="sr-only">Cari transaksi</span>
+        <span className="sr-only">Search transactions</span>
         <SearchIcon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-subtle" />
         <input
           type="search"
-          placeholder="Cari transaksi…"
+          placeholder="Search transactions…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="h-touch w-full rounded-xl border border-border-strong/60 bg-surface pl-12 pr-4 text-body text-foreground placeholder:text-foreground-subtle focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
@@ -84,8 +84,8 @@ export function HistoryView({ transactions }: { transactions: Transaction[] }) {
       {grouped.length === 0 ? (
         <EmptyState
           icon={<HistoryIcon className="size-5" />}
-          title="Belum ada transaksi"
-          description="Coba ubah filter atau kata kunci pencarian."
+          title="No transactions yet"
+          description="Try adjusting the filter or search term."
         />
       ) : (
         <div className="flex flex-col gap-6">

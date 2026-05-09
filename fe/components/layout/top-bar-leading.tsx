@@ -20,7 +20,7 @@ export function TopBarLeading() {
     return (
       <Link
         href="/settings"
-        aria-label="Buka pengaturan"
+        aria-label="Open settings"
         className="cursor-pointer rounded-pill"
       >
         <Avatar initials={initials} />

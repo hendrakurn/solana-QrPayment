@@ -60,7 +60,7 @@ export default function ScanPage() {
     if (!file) return;
     const ok = await decodeImageFile(file);
     if (!ok) {
-      setUploadError("QR pada gambar tidak bisa dibaca. Coba foto yang lebih jelas.");
+      setUploadError("QR code in image could not be read. Try a clearer photo.");
     }
   }
 
@@ -103,7 +103,7 @@ export default function ScanPage() {
       <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-edge pt-[calc(env(safe-area-inset-top)+16px)]">
         <Link
           href="/"
-          aria-label="Tutup pemindai"
+          aria-label="Close scanner"
           className="size-12 inline-flex items-center justify-center rounded-pill border border-white/15 bg-surface-3/60 backdrop-blur-md text-foreground hover:bg-surface-3/80 cursor-pointer shadow-lg active:scale-95 transition-transform"
         >
           <CloseIcon />
@@ -111,7 +111,7 @@ export default function ScanPage() {
         <button
           type="button"
           onClick={() => setHelpOpen(true)}
-          aria-label="Bantuan pemindaian"
+          aria-label="Scanning help"
           className="size-12 inline-flex items-center justify-center rounded-pill border border-white/15 bg-surface-3/60 backdrop-blur-md text-foreground hover:bg-surface-3/80 cursor-pointer shadow-lg active:scale-95 transition-transform"
         >
           <HelpIcon />
@@ -129,7 +129,7 @@ export default function ScanPage() {
 
         <div className="mt-12 flex flex-col items-center gap-3 pointer-events-auto z-20 text-center">
           <h1 className="text-display font-semibold tracking-tight text-foreground">
-            {detected ? "QR Terdeteksi" : "Scan QRIS to Pay"}
+            {detected ? "QR Detected" : "Scan QRIS to Pay"}
           </h1>
           <span
             className={cn(
@@ -142,10 +142,10 @@ export default function ScanPage() {
             )}
           >
             {detected
-              ? "Memuat detail pembayaran…"
+              ? "Loading payment details…"
               : status === "requesting"
-                ? "Menyalakan kamera…"
-                : "Tempatkan kode di dalam bingkai"}
+                ? "Starting camera…"
+                : "Place the code inside the frame"}
           </span>
         </div>
       </div>
@@ -160,7 +160,7 @@ export default function ScanPage() {
               </span>
               <div className="flex-1">
                 <h2 className="text-body font-semibold text-foreground">
-                  Tidak bisa membuka kamera
+                  Cannot open camera
                 </h2>
                 <p className="mt-1 text-body-sm text-foreground-muted">
                   {error.message}
@@ -175,7 +175,7 @@ export default function ScanPage() {
                     className="inline-flex h-10 items-center justify-center gap-2 rounded-pill bg-primary px-4 text-body-sm font-semibold text-white hover:bg-primary-soft cursor-pointer transition-colors"
                   >
                     <RefreshIcon className="size-4" />
-                    Coba lagi
+                    Try again
                   </button>
                   <button
                     type="button"
@@ -183,7 +183,7 @@ export default function ScanPage() {
                     className="inline-flex h-10 items-center justify-center gap-2 rounded-pill border border-border-strong bg-surface px-4 text-body-sm font-semibold text-foreground hover:bg-surface-3 cursor-pointer transition-colors"
                   >
                     <UploadIcon className="size-4" />
-                    Unggah QR
+                    Upload QR
                   </button>
                 </div>
               </div>
@@ -205,12 +205,12 @@ export default function ScanPage() {
 
         <div className="flex justify-center gap-12">
           <ActionCircle
-            label="Unggah QR"
+            label="Upload QR"
             icon={<UploadIcon className="size-7" />}
             onClick={() => fileInputRef.current?.click()}
           />
           <ActionCircle
-            label={torchOn ? "Matikan Flash" : "Flash"}
+            label={torchOn ? "Flash Off" : "Flash"}
             icon={<FlashIcon className="size-7" />}
             onClick={() => setTorch(!torchOn)}
             active={torchOn}
@@ -228,36 +228,36 @@ export default function ScanPage() {
 
         <p className="mt-8 text-center text-caption text-foreground-subtle">
           {torchSupported
-            ? "Pemindaian otomatis · arahkan ke kode QRIS"
-            : "Pemindaian otomatis · flash tidak tersedia di perangkat ini"}
+            ? "Auto scanning · point at a QRIS code"
+            : "Auto scanning · flash not available on this device"}
         </p>
       </div>
 
-      <Sheet open={helpOpen} onClose={() => setHelpOpen(false)} title="Tips pemindaian">
+      <Sheet open={helpOpen} onClose={() => setHelpOpen(false)} title="Scanning tips">
         <ul className="space-y-3 text-body-sm text-foreground-muted">
           <li className="flex gap-3">
             <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
               1
             </span>
-            <p>Pastikan QR berada di dalam bingkai dan tidak buram.</p>
+            <p>Make sure the QR is inside the frame and not blurry.</p>
           </li>
           <li className="flex gap-3">
             <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
               2
             </span>
-            <p>Aktifkan flash bila pencahayaan kurang.</p>
+            <p>Enable flash if the lighting is poor.</p>
           </li>
           <li className="flex gap-3">
             <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
               3
             </span>
-            <p>Untuk QRIS dinamis, tunggu sampai kasir menampilkan kode.</p>
+            <p>For dynamic QRIS, wait until the cashier displays the code.</p>
           </li>
           <li className="flex gap-3">
             <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
               4
             </span>
-            <p>Tidak bisa scan langsung? Gunakan tombol &quot;Unggah QR&quot; untuk memilih foto QR dari galeri.</p>
+            <p>Can&apos;t scan directly? Use the &quot;Upload QR&quot; button to pick a QR photo from your gallery.</p>
           </li>
         </ul>
       </Sheet>

@@ -6,12 +6,12 @@ export interface AiSuggestionProps {
   cta?: string;
 }
 
-export function AiSuggestion({ title, body, cta = "Tinjau saran" }: AiSuggestionProps) {
+export function AiSuggestion({ title, body, cta = "Review suggestion" }: AiSuggestionProps) {
   return (
     <article
       className="relative overflow-hidden rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/15 via-surface to-surface p-4"
       role="region"
-      aria-label="Saran AI"
+      aria-label="AI Suggestion"
     >
       <div
         aria-hidden
@@ -27,7 +27,7 @@ export function AiSuggestion({ title, body, cta = "Tinjau saran" }: AiSuggestion
               SolPay AI
             </span>
             <span className="size-1 rounded-pill bg-foreground-subtle" />
-            <span className="text-caption text-foreground-subtle">untukmu</span>
+            <span className="text-caption text-foreground-subtle">for you</span>
           </div>
           <h3 className="mt-1 text-body font-semibold leading-5 text-foreground">{title}</h3>
           <p className="mt-1 text-body-sm leading-5 text-foreground-muted">{body}</p>

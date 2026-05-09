@@ -54,7 +54,7 @@ export function useUsdcBalance(): UsdcBalanceState {
       setAta(b.ata);
     } catch (e: unknown) {
       if (id !== fetchIdRef.current) return;
-      setError(e instanceof Error ? e.message : "Gagal memuat saldo");
+      setError(e instanceof Error ? e.message : "Failed to load balance");
       setUiAmount(0);
       setExists(false);
     } finally {

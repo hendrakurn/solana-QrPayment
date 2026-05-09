@@ -3,9 +3,9 @@ import { CheckIcon, ClockIcon, AlertIcon } from "@/components/icons";
 import { Badge } from "./badge";
 
 const labels: Record<TransactionStatus, string> = {
-  success: "Berhasil",
-  pending: "Menunggu",
-  failed: "Gagal",
+  success: "Success",
+  pending: "Pending",
+  failed: "Failed",
 };
 
 export function StatusPill({ status }: { status: TransactionStatus }) {

@@ -11,50 +11,6 @@ import { useUsdcBalance } from "./use-usdc-balance";
  */
 const RATE_IDR_PER_USDC = 15_640;
 
-const COMING_SOON: Wallet[] = [
-  {
-    id: "w-usdt",
-    symbol: "USDT",
-    network: "Solana Devnet",
-    label: "Tether",
-    balance: 0,
-    fiatValue: 0,
-    apr: 4.1,
-    trend24h: 0,
-    lastUsedAt: new Date(0),
-    useCount: 0,
-    address: "Coming soon",
-    comingSoon: true,
-  },
-  {
-    id: "w-pyusd",
-    symbol: "PYUSD",
-    network: "Solana Devnet",
-    label: "PayPal USD",
-    balance: 0,
-    fiatValue: 0,
-    apr: 5.2,
-    trend24h: 0,
-    lastUsedAt: new Date(0),
-    useCount: 0,
-    address: "Coming soon",
-    comingSoon: true,
-  },
-  {
-    id: "w-usdg",
-    symbol: "USDG",
-    network: "Solana Devnet",
-    label: "Global Dollar",
-    balance: 0,
-    fiatValue: 0,
-    apr: 6.0,
-    trend24h: 0,
-    lastUsedAt: new Date(0),
-    useCount: 0,
-    address: "Coming soon",
-    comingSoon: true,
-  },
-];
 
 export interface WalletListState {
   wallets: Wallet[];
@@ -65,13 +21,8 @@ export interface WalletListState {
 }
 
 /**
- * Builds the wallet list shown on /wallet:
- *  - one live USDC entry from the connected Phantom wallet
- *  - three placeholder entries (USDT/PYUSD/USDG) marked `comingSoon` because
- *    the on-chain program currently only accepts USDC
- *
- * Returns an empty list when no wallet is connected so the page can prompt
- * the user to connect.
+ * Builds the wallet list shown on /wallet.
+ * Returns empty list when no wallet is connected.
  */
 export function useWalletList(): WalletListState {
   const { publicKey, connected } = useWallet();
@@ -94,7 +45,7 @@ export function useWalletList(): WalletListState {
       isDefault: true,
       address: publicKey.toBase58(),
     };
-    return [live, ...COMING_SOON];
+    return [live];
   }, [publicKey, uiAmount]);
 
   const totalIdr = wallets.reduce((sum, w) => sum + w.fiatValue, 0);

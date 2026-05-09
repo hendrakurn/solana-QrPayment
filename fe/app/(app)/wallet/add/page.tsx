@@ -1,23 +1,20 @@
-import Link from "next/link";
 import { TopBar } from "@/components/layout/top-bar";
 import { TokenMark } from "@/components/ui/token-mark";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon, ShieldCheckIcon, SparklesIcon } from "@/components/icons";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
+import Link from "next/link";
 import type { StablecoinSymbol } from "@/types";
 
 const supported: { symbol: StablecoinSymbol; name: string; apr: string; tag?: string }[] = [
-  { symbol: "USDC", name: "USD Coin", apr: "4.8% APR", tag: "Paling populer" },
-  { symbol: "USDT", name: "Tether", apr: "4.1% APR" },
-  { symbol: "PYUSD", name: "PayPal USD", apr: "5.2% APR", tag: "Yield baru" },
-  { symbol: "USDG", name: "Global Dollar", apr: "6.0% APR" },
+  { symbol: "USDC", name: "USD Coin", apr: "4.8% APR", tag: "Most popular" },
 ];
 
 export default function AddWalletPage() {
   return (
     <MotionSection stagger immediate className="flex flex-col gap-6">
       <MotionItem>
-        <TopBar back="/wallet" title="Tambah dompet" subtitle="Pilih stablecoin Solana" />
+        <TopBar back="/wallet" title="Add wallet" subtitle="Choose a Solana stablecoin" />
       </MotionItem>
 
       <MotionItem
@@ -28,10 +25,10 @@ export default function AddWalletPage() {
           <ShieldCheckIcon className="size-5" />
         </span>
         <div>
-          <p className="text-body font-semibold text-foreground">Aman by-default</p>
+          <p className="text-body font-semibold text-foreground">Secure by default</p>
           <p className="mt-0.5 text-body-sm text-foreground-muted leading-5">
-            Setiap dompet dibuat di smart account non-custodial dengan recovery
-            biometrik. Kamu memegang kendali penuh.
+            Each wallet is created as a non-custodial smart account with biometric
+            recovery. You hold full control.
           </p>
         </div>
       </MotionItem>
@@ -67,16 +64,16 @@ export default function AddWalletPage() {
           <SparklesIcon className="size-5" />
         </span>
         <div className="flex-1 min-w-0">
-          <p className="text-body-sm font-semibold text-foreground">Impor dompet eksternal</p>
+          <p className="text-body-sm font-semibold text-foreground">Import external wallet</p>
           <p className="text-caption text-foreground-subtle">
-            Phantom, Backpack, Solflare, atau seed phrase. Disimpan terenkripsi.
+            Phantom, Backpack, Solflare, or seed phrase. Stored encrypted.
           </p>
         </div>
         <Link
           href="/wallet"
           className="inline-flex items-center justify-center rounded-pill bg-white/10 px-3 py-1.5 text-caption font-semibold text-foreground hover:bg-white/16 cursor-pointer"
         >
-          Hubungkan
+          Connect
         </Link>
       </MotionItem>
     </MotionSection>

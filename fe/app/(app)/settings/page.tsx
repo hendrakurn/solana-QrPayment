@@ -1,6 +1,5 @@
 import { TopBar } from "@/components/layout/top-bar";
 import { Avatar } from "@/components/layout/avatar";
-import { Badge } from "@/components/ui/badge";
 import { SettingsRow } from "@/components/settings/settings-row";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import {
@@ -20,26 +19,25 @@ export default function SettingsPage() {
   return (
     <MotionSection stagger immediate className="flex flex-col gap-6">
       <MotionItem>
-        <TopBar back="/" title="Pengaturan" />
+        <TopBar back="/" title="Settings" />
       </MotionItem>
 
-      {/* Profile hero card */}
+      {/* Profile hero */}
       <MotionItem
         as="article"
-        className="rounded-xl border border-border-strong bg-gradient-to-b from-surface-3 to-surface-2 p-5 flex items-center gap-4 shadow-[var(--shadow-card)]"
+        className="flex items-center gap-4 py-2"
       >
-        <Avatar initials={mockUser.avatarSeed} size={56} />
+        <Avatar initials={mockUser.avatarSeed} size={52} />
         <div className="flex-1 min-w-0">
           <p className="text-body font-semibold text-foreground truncate">{mockUser.name}</p>
           <p className="text-caption text-foreground-subtle truncate">{mockUser.email}</p>
         </div>
-        <Badge tone="success">KYC Lv. 2</Badge>
       </MotionItem>
 
-      <MotionItem><Section title="Profil">
+      <MotionItem><Section title="Profile">
         <SettingsRow
           icon={<UserIcon className="size-5" />}
-          label="Nama tampilan"
+          label="Display name"
           value={mockUser.name}
         />
         <SettingsRow
@@ -49,47 +47,47 @@ export default function SettingsPage() {
         />
       </Section></MotionItem>
 
-      <MotionItem><Section title="Wilayah">
+      <MotionItem><Section title="Region">
         <SettingsRow
           icon={<GlobeIcon className="size-5" />}
-          label="Negara"
+          label="Country"
           value={mockUser.country}
         />
         <SettingsRow
           icon={<ClockIcon className="size-5" />}
-          label="Zona waktu"
+          label="Timezone"
           value={mockUser.timezone}
         />
       </Section></MotionItem>
 
-      <MotionItem><Section title="Keamanan & AI">
+      <MotionItem><Section title="Security & AI">
         <SettingsRow
           icon={<LockIcon className="size-5" />}
-          label="Kunci dengan biometrik"
-          description="Aktif · Face ID"
+          label="Biometric lock"
+          description="Active · Face ID"
         />
         <SettingsRow
           icon={<ShieldCheckIcon className="size-5" />}
           label="AI Fraud Detection"
-          description="Memantau pola transaksi tidak biasa"
+          description="Monitors unusual transaction patterns"
         />
         <SettingsRow
           icon={<SparklesIcon className="size-5" />}
-          label="Saran AI di beranda"
-          description="Tampilkan rekomendasi rate & wallet"
+          label="AI suggestions on home"
+          description="Show rate & wallet recommendations"
         />
       </Section></MotionItem>
 
-      <MotionItem><Section title="Bantuan">
+      <MotionItem><Section title="Help">
         <SettingsRow
           icon={<HelpIcon className="size-5" />}
           label="Tips & FAQ"
-          description="Panduan singkat fitur SolPay"
+          description="Quick guide to SolPay features"
         />
         <SettingsRow
           icon={<MailIcon className="size-5" />}
-          label="Hubungi support"
-          description="Rata-rata respons < 1 menit"
+          label="Contact support"
+          description="Average response < 1 minute"
         />
       </Section></MotionItem>
 
@@ -99,14 +97,14 @@ export default function SettingsPage() {
         className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-danger/40 bg-danger/8 text-body font-semibold text-danger hover:bg-danger/14 cursor-pointer transition-colors"
       >
         <LogOutIcon className="size-5" />
-        Keluar dari SolPay
+        Sign out of SolPay
       </MotionItem>
 
       <MotionItem
         as="p"
         className="text-center text-caption text-foreground-subtle pt-2 pb-4"
       >
-        SolPay v0.2.0 · dibangun untuk pasar Indonesia
+        SolPay v0.2.0 · built for the Indonesian market
       </MotionItem>
     </MotionSection>
   );

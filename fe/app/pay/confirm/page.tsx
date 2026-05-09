@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { CloseIcon, SparklesIcon } from "@/components/icons";
+import { CloseIcon } from "@/components/icons";
 import { Wordmark } from "@/components/layout/wordmark";
 import { MerchantCard } from "@/components/pay/merchant-card";
 import { AmountDisplay } from "@/components/pay/amount-display";
@@ -35,8 +35,7 @@ export default function ConfirmPage() {
   // (the slider locks itself after `confirmed` and has no external reset prop).
   const [resetKey, setResetKey] = useState(0);
 
-  // Single-wallet list (USDC only) so the existing WalletSelector UI stays
-  // intact. Other stablecoins are surfaced as "Segera hadir" on /wallet.
+  // Single-wallet list (USDC only) so the existing WalletSelector UI stays intact.
   const usdcWallet = useMemo<Wallet | null>(() => {
     if (!wallet.publicKey) return null;
     return {
@@ -74,12 +73,12 @@ export default function ConfirmPage() {
   async function handleConfirm() {
     setError(null);
     if (!program || !wallet.publicKey) {
-      setError("Hubungkan dompet Phantom dulu.");
+      setError("Connect your Phantom wallet first.");
       setResetKey((k) => k + 1);
       return;
     }
     if (insufficientBalance) {
-      setError("Saldo USDC tidak cukup. Top-up dulu di halaman Wallet.");
+      setError("Insufficient USDC balance. Top up on the Wallet page first.");
       setResetKey((k) => k + 1);
       return;
     }
@@ -119,7 +118,7 @@ export default function ConfirmPage() {
       <header className="relative z-30 flex items-center justify-between px-edge pt-[calc(env(safe-area-inset-top)+16px)] pb-3 border-b border-white/8 bg-background/85 backdrop-blur-xl">
         <Link
           href="/pay/scan"
-          aria-label="Kembali ke pemindai"
+          aria-label="Back to scanner"
           className="size-10 inline-flex items-center justify-center rounded-pill border border-border-strong bg-surface-2 text-foreground hover:bg-surface-3 cursor-pointer"
         >
           <CloseIcon />
@@ -146,12 +145,12 @@ export default function ConfirmPage() {
         </MotionItem>
 
         <MotionItem as="section" className="flex flex-col gap-3">
-          <h3 className="text-body font-semibold text-foreground">Sumber dana</h3>
+          <h3 className="text-body font-semibold text-foreground">Payment source</h3>
 
           {!connected ? (
             <div className="flex flex-col items-start gap-3 rounded-xl border border-border-strong/60 bg-surface p-4">
               <p className="text-body-sm text-foreground-muted">
-                Hubungkan dompet Phantom untuk membayar dengan USDC kamu.
+                Connect your Phantom wallet to pay with USDC.
               </p>
               <ConnectButton />
             </div>
@@ -163,20 +162,6 @@ export default function ConfirmPage() {
               onChange={() => {}}
             />
           ) : null}
-        </MotionItem>
-
-        <MotionItem
-          as="article"
-          className="flex items-start gap-3 rounded-xl border border-accent-purple/30 bg-gradient-to-br from-accent-purple/15 via-surface to-surface p-3.5"
-        >
-          <span className="inline-flex size-9 items-center justify-center rounded-pill bg-accent-purple/30 text-accent-purple-soft shrink-0">
-            <SparklesIcon className="size-5" />
-          </span>
-          <p className="text-body-sm leading-5 text-foreground-muted">
-            <span className="text-foreground font-semibold">SolPay AI:</span>{" "}
-            USDC memberi rate paling kompetitif di Solana devnet untuk
-            transaksi ini.
-          </p>
         </MotionItem>
 
         <MotionItem>
@@ -193,10 +178,10 @@ export default function ConfirmPage() {
             as="div"
             className="rounded-xl border border-warning/40 bg-warning/10 p-3.5 text-body-sm text-warning"
           >
-            Saldo USDC kamu tidak cukup ({balanceUsdc.toFixed(2)} USDC) untuk
-            pembayaran ini ({totalUsdcRequired.toFixed(2)} USDC).{" "}
-            <Link href="/wallet/add" className="font-semibold underline">
-              Top-up dulu
+            Your USDC balance ({balanceUsdc.toFixed(2)} USDC) is not enough for
+            this payment ({totalUsdcRequired.toFixed(2)} USDC).{" "}
+            <Link href="/wallet" className="font-semibold underline">
+              Top up
             </Link>
             .
           </MotionItem>
@@ -218,15 +203,15 @@ export default function ConfirmPage() {
         <div className="mx-auto w-full max-w-canvas-inner">
           <SlideToPay
             key={resetKey}
-            label={`Geser untuk bayar Rp ${totalIdr.toLocaleString("id-ID")}`}
-            confirmedLabel="Memproses pembayaran…"
+            label={`Slide to pay Rp ${totalIdr.toLocaleString("id-ID")}`}
+            confirmedLabel="Processing payment…"
             disabled={slideDisabled}
             onConfirm={handleConfirm}
           />
           <p className="mt-3 text-center text-caption text-foreground-subtle">
             {connected
               ? `Devnet · ${draft.merchant.name}`
-              : "Hubungkan Phantom dulu sebelum membayar"}
+              : "Connect Phantom wallet before paying"}
           </p>
         </div>
       </footer>

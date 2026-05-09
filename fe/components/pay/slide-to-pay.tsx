@@ -23,8 +23,8 @@ const COMMIT_THRESHOLD = 0.92;
  * rounded-xl shape).
  */
 export function SlideToPay({
-  label = "Geser untuk bayar",
-  confirmedLabel = "Memproses…",
+  label = "Slide to pay",
+  confirmedLabel = "Processing…",
   onConfirm,
   disabled,
 }: {

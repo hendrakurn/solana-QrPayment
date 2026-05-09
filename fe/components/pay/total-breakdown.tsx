@@ -16,17 +16,17 @@ export function TotalBreakdown({ amountIdr, feeIdr, rate, symbol }: TotalBreakdo
     <div className="rounded-xl border border-border-strong/60 bg-surface p-4 flex flex-col gap-3">
       <Row label="Subtotal" value={formatRupiah(amountIdr)} />
       <Row
-        label="Biaya jaringan"
+        label="Network fee"
         value={formatRupiah(feeIdr)}
         valueAccent="text-tertiary"
       />
       <Row
-        label="Rate konversi"
+        label="Conversion rate"
         value={`Rp ${rate.toLocaleString("id-ID")}/${symbol}`}
       />
       <span aria-hidden className="h-px w-full bg-border-strong/60 my-1" />
       <div className="flex items-center justify-between">
-        <span className="text-body font-semibold text-foreground">Total dibayar</span>
+        <span className="text-body font-semibold text-foreground">Total to pay</span>
         <div className="text-right">
           <p className="text-body font-semibold tabular-nums text-foreground">
             {formatStable(totalStable, symbol)}

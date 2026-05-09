@@ -6,9 +6,9 @@ import { ChevronRightIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const statusLabel = {
-  success: "Sukses",
-  pending: "Menunggu",
-  failed: "Gagal",
+  success: "Success",
+  pending: "Pending",
+  failed: "Failed",
 } as const;
 
 const statusToneText = {

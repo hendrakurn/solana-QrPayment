@@ -40,10 +40,10 @@ export function WalletRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate text-body font-semibold text-foreground">{wallet.label}</p>
-          {recommended ? <Badge tone="primary">Direkomendasikan</Badge> : null}
+          {recommended ? <Badge tone="primary">Recommended</Badge> : null}
         </div>
         <p className="mt-0.5 text-caption text-foreground-subtle">
-          Saldo {formatStable(wallet.balance, wallet.symbol)} · APR {wallet.apr ?? 0}%
+          Balance {formatStable(wallet.balance, wallet.symbol)} · APR {wallet.apr ?? 0}%
         </p>
       </div>
       <div className="text-right shrink-0">

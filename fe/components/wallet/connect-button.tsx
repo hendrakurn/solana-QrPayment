@@ -35,7 +35,7 @@ export function ConnectButton() {
         onClick={() => setVisible(true)}
         className="inline-flex h-10 items-center gap-2 rounded-pill bg-primary px-4 text-body-sm font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft active:bg-primary-deep cursor-pointer transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        {connecting ? "Menghubungkan…" : "Hubungkan Phantom"}
+        {connecting ? "Connecting…" : "Connect Phantom"}
       </button>
     );
   }
@@ -66,7 +66,7 @@ export function ConnectButton() {
             }}
             className="flex w-full items-center rounded-lg px-3 py-2 text-left text-body-sm text-foreground hover:bg-surface-4 cursor-pointer"
           >
-            Salin alamat
+            Copy address
           </button>
           <button
             type="button"
@@ -77,7 +77,7 @@ export function ConnectButton() {
             }}
             className="flex w-full items-center rounded-lg px-3 py-2 text-left text-body-sm text-danger hover:bg-surface-4 cursor-pointer"
           >
-            Putuskan
+            Disconnect
           </button>
         </div>
       )}

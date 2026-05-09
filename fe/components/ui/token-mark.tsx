@@ -12,21 +12,6 @@ const palette: Record<StablecoinSymbol, { bg: string; ring: string; text: string
     ring: "ring-coin-usdc/40",
     text: "text-coin-usdc-tint",
   },
-  USDT: {
-    bg: "bg-coin-usdt/20",
-    ring: "ring-coin-usdt/40",
-    text: "text-coin-usdt-tint",
-  },
-  PYUSD: {
-    bg: "bg-coin-pyusd/20",
-    ring: "ring-coin-pyusd/40",
-    text: "text-coin-pyusd-tint",
-  },
-  USDG: {
-    bg: "bg-accent-yellow/15",
-    ring: "ring-accent-yellow/40",
-    text: "text-accent-yellow",
-  },
 };
 
 export interface TokenMarkProps {

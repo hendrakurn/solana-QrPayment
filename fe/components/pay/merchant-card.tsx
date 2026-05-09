@@ -9,7 +9,7 @@ import { ShieldCheckIcon } from "@/components/icons";
 export function MerchantCard({ merchant }: { merchant: MerchantInfo }) {
   return (
     <section className="flex flex-col items-center text-center">
-      <p className="text-body-sm text-foreground-muted">Membayar ke</p>
+      <p className="text-body-sm text-foreground-muted">Paying to</p>
 
       <div className="mt-2 inline-flex size-16 items-center justify-center rounded-pill border border-border-strong bg-surface-3 text-section font-semibold text-primary shadow-[var(--shadow-card)]">
         {merchant.name[0]}
@@ -21,7 +21,7 @@ export function MerchantCard({ merchant }: { merchant: MerchantInfo }) {
 
       <p className="mt-1 inline-flex items-center justify-center gap-1.5 text-body-sm text-foreground-muted">
         <ShieldCheckIcon className="size-4 text-primary" />
-        {merchant.verified ? "Merchant terverifikasi" : "Belum terverifikasi"} ·{" "}
+        {merchant.verified ? "Verified merchant" : "Unverified"} ·{" "}
         <span className="font-mono tabular-nums text-foreground-subtle">
           {merchant.qrisId}
         </span>

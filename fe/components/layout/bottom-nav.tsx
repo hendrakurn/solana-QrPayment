@@ -16,19 +16,19 @@ interface NavItem {
 const items: NavItem[] = [
   {
     href: "/",
-    label: "Beranda",
+    label: "Home",
     icon: <HomeIcon className="size-5" />,
     match: (p) => p === "/",
   },
   {
     href: "/wallet",
-    label: "Dompet",
+    label: "Wallet",
     icon: <WalletIcon className="size-5" />,
     match: (p) => p.startsWith("/wallet"),
   },
   {
     href: "/history",
-    label: "Riwayat",
+    label: "History",
     icon: <HistoryIcon className="size-5" />,
     match: (p) => p.startsWith("/history"),
   },
@@ -44,7 +44,7 @@ export function BottomNav() {
 
   return (
     <nav
-      aria-label="Navigasi utama"
+      aria-label="Main navigation"
       className="fixed inset-x-0 bottom-0 z-40 pb-[max(env(safe-area-inset-bottom),16px)] pt-3 px-4 pointer-events-none"
     >
       <div className="pointer-events-auto mx-auto flex w-full max-w-canvas-inner items-center justify-between rounded-2xl border border-white/8 bg-surface-low/85 px-3 py-2 backdrop-blur-xl shadow-[var(--shadow-nav)]">
@@ -55,7 +55,7 @@ export function BottomNav() {
         <Link
           href="/pay/scan"
           aria-label="Tap to Pay"
-          className="relative -mt-7 flex size-14 items-center justify-center rounded-pill bg-primary text-white cursor-pointer transition-transform duration-[var(--duration-fast)] active:scale-95 shadow-[var(--shadow-glow-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="relative -mt-7 flex size-14 items-center justify-center rounded-pill bg-primary text-white cursor-pointer transition-all duration-[var(--duration-fast)] active:scale-95 hover:scale-105 hover:bg-primary-soft shadow-[var(--shadow-glow-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span
             aria-hidden

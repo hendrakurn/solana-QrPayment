@@ -122,7 +122,7 @@ export function useQrScanner({ onDecode, enabled = true }: Options) {
         setStatus("error");
         setError({
           kind: "unsupported",
-          message: "Browser ini belum mendukung akses kamera.",
+          message: "This browser does not support camera access.",
         });
         return;
       }
@@ -181,7 +181,7 @@ export function useQrScanner({ onDecode, enabled = true }: Options) {
           setError({
             kind: "permission",
             message:
-              "Akses kamera ditolak. Aktifkan izin kamera di pengaturan browser lalu coba lagi.",
+              "Camera access denied. Enable camera permission in browser settings and try again.",
           });
         } else if (
           e?.name === "NotFoundError" ||
@@ -189,12 +189,12 @@ export function useQrScanner({ onDecode, enabled = true }: Options) {
         ) {
           setError({
             kind: "no-camera",
-            message: "Tidak menemukan kamera belakang di perangkat ini.",
+            message: "No rear camera found on this device.",
           });
         } else {
           setError({
             kind: "unknown",
-            message: e?.message || "Gagal memulai kamera.",
+            message: e?.message || "Failed to start camera.",
           });
         }
         setStatus("error");
