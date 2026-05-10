@@ -99,7 +99,7 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
       vault: vaultPda,
       vaultTokenAccount: vaultAta,
       payerTokenAccount: payerAta,
-      usdcMint: IDRX_MINT,
+      idrxMint: IDRX_MINT,
       paymentRecord: paymentPda,
     })
     .preInstructions(preInstructions)

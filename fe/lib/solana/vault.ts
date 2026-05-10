@@ -5,7 +5,7 @@ import { deriveVaultPda } from "./pda";
 
 export interface VaultState {
   authority: PublicKey;
-  usdcMint: PublicKey;
+  idrxMint: PublicKey;
   vaultTokenAccount: PublicKey;
   totalReceived: BN;
   totalSettled: BN;
