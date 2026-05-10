@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import type { WalletName } from "@solana/wallet-adapter-base";
 import { truncateAddress } from "@/lib/format";
 
 /**
@@ -11,10 +12,32 @@ import { truncateAddress } from "@/lib/format";
  * useWalletModal — Phantom is registered in SolanaProvider.
  */
 export function ConnectButton() {
-  const { publicKey, disconnect, connecting, connected } = useWallet();
+  const { publicKey, disconnect, connecting, connected, wallet, wallets, select, connect } =
+    useWallet();
   const { setVisible } = useWalletModal();
   const [menuOpen, setMenuOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  async function handleConnect() {
+    const phantom = wallets.find((entry) => entry.adapter.name === "Phantom");
+
+    if (!phantom) {
+      setVisible(true);
+      return;
+    }
+
+    try {
+      if (wallet?.adapter.name !== "Phantom") {
+        select("Phantom" as WalletName);
+        await phantom.adapter.connect();
+        return;
+      }
+
+      await connect();
+    } catch {
+      // User rejected or Phantom aborted; keep UI in disconnected state.
+    }
+  }
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -32,7 +55,9 @@ export function ConnectButton() {
       <button
         type="button"
         disabled={connecting}
-        onClick={() => setVisible(true)}
+        onClick={() => {
+          void handleConnect();
+        }}
         className="inline-flex h-10 items-center gap-2 rounded-pill bg-primary px-4 text-body-sm font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft active:bg-primary-deep cursor-pointer transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {connecting ? "Connecting…" : "Connect Phantom"}
