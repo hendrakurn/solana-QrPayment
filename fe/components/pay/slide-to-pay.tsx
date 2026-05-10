@@ -4,8 +4,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronRightIcon, LockIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
-/** Diameter of the draggable thumb in pixels. Same as size-12 (h-12 w-12). */
+/**
+ * Footprint of the thumb (visible diameter + symmetric inner padding on both
+ * sides of the track). Visible thumb is `size-12` (48px) and it sits inside
+ * `top-1 left-1` (4px padding), so the cap on translateX is `clientWidth - 56`.
+ */
 const THUMB_SIZE_PX = 56;
+/** Visible diameter of the thumb circle (matches size-12 → 48px). */
+const THUMB_VISIBLE_PX = 48;
 /**
  * Fraction of the available travel that must be reached before the gesture
  * commits. Below this the thumb springs back to start; above it the action
@@ -36,15 +42,29 @@ export function SlideToPay({
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
+  // While the user is actively dragging we want the fill + thumb to follow the
+  // pointer 1:1 with NO transition. On release we briefly enable a transition
+  // so the snap (back to 0 or forward to max) feels smooth instead of jerky.
+  const [animating, setAnimating] = useState(false);
   const startX = useRef<number | null>(null);
+  const animTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const armSnap = useCallback(() => {
+    setAnimating(true);
+    if (animTimer.current) clearTimeout(animTimer.current);
+    animTimer.current = setTimeout(() => setAnimating(false), 320);
+  }, []);
 
   const reset = useCallback(() => {
     if (confirmed) return;
+    armSnap();
     setProgress(0);
-  }, [confirmed]);
+  }, [confirmed, armSnap]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (disabled || confirmed) return;
+    if (animTimer.current) clearTimeout(animTimer.current);
+    setAnimating(false);
     startX.current = e.clientX - progress;
     (e.target as Element).setPointerCapture(e.pointerId);
   };
@@ -64,6 +84,7 @@ export function SlideToPay({
     if (!track) return;
     const max = track.clientWidth - THUMB_SIZE_PX;
     if (progress > max * COMMIT_THRESHOLD) {
+      armSnap();
       setProgress(max);
       setConfirmed(true);
       onConfirm();
@@ -78,6 +99,12 @@ export function SlideToPay({
     window.addEventListener("pointerup", onUp);
     return () => window.removeEventListener("pointerup", onUp);
   }, [confirmed, reset]);
+
+  useEffect(() => {
+    return () => {
+      if (animTimer.current) clearTimeout(animTimer.current);
+    };
+  }, []);
 
   const onKey = (e: React.KeyboardEvent) => {
     if (disabled || confirmed) return;
@@ -104,11 +131,16 @@ export function SlideToPay({
           : "border-primary/40 cursor-grab active:cursor-grabbing",
       )}
     >
-      {/* Filled progress with gradient — visually communicates how far user has slid */}
+      {/* Filled progress with gradient — pill-shaped so its right edge curves
+          to match the thumb circle, and inset to sit flush with the thumb's
+          padded position (top-1 / left-1). */}
       <div
         aria-hidden
-        style={{ width: progress + THUMB_SIZE_PX }}
-        className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary-deep via-primary to-primary-soft transition-[width] duration-100"
+        style={{ width: progress + THUMB_VISIBLE_PX }}
+        className={cn(
+          "absolute inset-y-1 left-1 rounded-pill bg-gradient-to-r from-primary-deep via-primary to-primary-soft will-change-[width]",
+          animating && "transition-[width] duration-300 ease-out",
+        )}
       />
 
       {/* Center label */}
@@ -124,7 +156,10 @@ export function SlideToPay({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         style={{ transform: `translateX(${progress}px)` }}
-        className="absolute top-1 left-1 z-10 flex size-12 items-center justify-center rounded-pill bg-white text-primary shadow-[var(--shadow-thumb)] cursor-grab active:cursor-grabbing"
+        className={cn(
+          "absolute top-1 left-1 z-10 flex size-12 items-center justify-center rounded-pill bg-white text-primary shadow-[var(--shadow-thumb)] cursor-grab active:cursor-grabbing will-change-transform touch-none",
+          animating && "transition-transform duration-300 ease-out",
+        )}
       >
         {confirmed ? (
           <span className="size-4 rounded-full border-2 border-primary border-t-transparent animate-spin-soft" />

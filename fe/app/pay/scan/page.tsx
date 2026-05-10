@@ -104,7 +104,7 @@ export default function ScanPage() {
       </div>
 
       {/* Scanner overlay */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pb-48 pointer-events-none">
         <ScannerFrame
           className={cn(
             "transition-colors duration-300",
@@ -112,7 +112,7 @@ export default function ScanPage() {
           )}
         />
 
-        <div className="mt-12 flex flex-col items-center gap-3 pointer-events-auto z-20 text-center">
+        <div className="mt-10 flex flex-col items-center gap-3 pointer-events-auto z-20 text-center">
           <h1 className="text-display font-semibold tracking-tight text-accent-yellow">
             {detected ? "QR Detected" : "Scan QRIS to Pay"}
           </h1>
@@ -178,7 +178,7 @@ export default function ScanPage() {
       )}
 
       {/* Bottom action panel */}
-      <div className="absolute inset-x-0 bottom-0 z-30 pt-12 pb-[calc(env(safe-area-inset-bottom)+32px)] px-edge bg-gradient-to-t from-background/90 via-background/50 to-transparent">
+      <div className="absolute inset-x-0 bottom-0 z-30 pt-20 pb-[calc(env(safe-area-inset-bottom)+32px)] px-edge bg-gradient-to-t from-background/95 via-background/65 to-transparent">
         {uploadError && (
           <div
             role="alert"
