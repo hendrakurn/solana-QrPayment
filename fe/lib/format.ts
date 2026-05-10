@@ -24,7 +24,7 @@ export function formatRupiah(amount: number): string {
   return IDR_FORMATTER.format(amount);
 }
 
-export function formatStable(amount: number, symbol = "USDC"): string {
+export function formatStable(amount: number, symbol = "IDRX"): string {
   return `${STABLE_FORMATTER.format(amount)} ${symbol}`;
 }
 

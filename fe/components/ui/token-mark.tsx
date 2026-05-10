@@ -23,7 +23,7 @@ export function TokenMark({ symbol, size = "md", className }: TokenMarkProps) {
       style={{ width: px, height: px }}
     >
       <Image
-        src="/usdc.webp"
+        src="/idrx.svg"
         alt={symbol}
         width={px}
         height={px}

@@ -3,14 +3,7 @@
 import { useMemo } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import type { Wallet } from "@/types";
-import { useUsdcBalance } from "./use-usdc-balance";
-
-/**
- * Hardcoded USDC→IDR rate for MVP. Matches the rate used elsewhere
- * (BalanceCardLive, mockPaymentDraft) so totals stay consistent.
- */
-const RATE_IDR_PER_USDC = 15_640;
-
+import { useIdrxBalance } from "./use-usdc-balance";
 
 export interface WalletListState {
   wallets: Wallet[];
@@ -26,18 +19,17 @@ export interface WalletListState {
  */
 export function useWalletList(): WalletListState {
   const { publicKey, connected } = useWallet();
-  const { uiAmount, loading, error } = useUsdcBalance();
+  const { uiAmount, loading, error } = useIdrxBalance();
 
   const wallets = useMemo<Wallet[]>(() => {
     if (!publicKey) return [];
-    const usdcFiat = Math.round(uiAmount * RATE_IDR_PER_USDC);
     const live: Wallet = {
-      id: "w-usdc",
-      symbol: "USDC",
+      id: "w-idrx",
+      symbol: "IDRX",
       network: "Solana",
-      label: "USDC",
+      label: "IDRX",
       balance: uiAmount,
-      fiatValue: usdcFiat,
+      fiatValue: Math.round(uiAmount),
       apr: 4.8,
       trend24h: 0,
       lastUsedAt: new Date(),

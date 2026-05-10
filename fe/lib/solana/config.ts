@@ -10,11 +10,13 @@ export const SOLPAY_PROGRAM_ID = new PublicKey(
     "35SH4CwgcAjTD23RFVvB63jANFo7cMraqMsKxRunHBdJ",
 );
 
-export const USDC_MINT = new PublicKey(
-  process.env.NEXT_PUBLIC_USDC_MINT ??
-    "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+// IDRX: Indonesian Rupiah stablecoin on Solana (1 IDRX = 1 IDR)
+// Devnet: create via `spl-token create-token --decimals 2`
+export const IDRX_MINT = new PublicKey(
+  process.env.NEXT_PUBLIC_IDRX_MINT ??
+    "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV",
 );
-export const USDC_DECIMALS = 6;
+export const IDRX_DECIMALS = 2;
 
 // PDA seeds — match contracts/programs/solpay/src/instructions/*
 export const VAULT_SEED = Buffer.from("vault");

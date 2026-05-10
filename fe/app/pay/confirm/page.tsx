@@ -15,7 +15,7 @@ import { ConnectButton } from "@/components/wallet/connect-button";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { usePaymentDraft } from "@/lib/payment/draft-store";
 import { useLastPaymentStore } from "@/lib/payment/last-payment-store";
-import { useUsdcBalance } from "@/lib/solana/use-usdc-balance";
+import { useIdrxBalance } from "@/lib/solana/use-usdc-balance";
 import { getSolpayProgram } from "@/lib/solana/program";
 import { executePayment } from "@/lib/solana/pay";
 import { parseSolpayError } from "@/lib/solana/errors";
@@ -27,7 +27,7 @@ export default function ConfirmPage() {
   const setLastPayment = useLastPaymentStore((s) => s.set);
   const { connection } = useConnection();
   const wallet = useWallet();
-  const { uiAmount: balanceUsdc, loading: balLoading } = useUsdcBalance();
+  const { uiAmount: balanceIdrx, loading: balLoading } = useIdrxBalance();
 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -35,16 +35,15 @@ export default function ConfirmPage() {
   // (the slider locks itself after `confirmed` and has no external reset prop).
   const [resetKey, setResetKey] = useState(0);
 
-  // Single-wallet list (USDC only) so the existing WalletSelector UI stays intact.
-  const usdcWallet = useMemo<Wallet | null>(() => {
+  const idrxWallet = useMemo<Wallet | null>(() => {
     if (!wallet.publicKey) return null;
     return {
-      id: "w-usdc",
-      symbol: "USDC",
+      id: "w-idrx",
+      symbol: "IDRX",
       network: "Solana",
-      label: "USDC",
-      balance: balanceUsdc,
-      fiatValue: Math.round(balanceUsdc * draft.rate),
+      label: "IDRX",
+      balance: balanceIdrx,
+      fiatValue: Math.round(balanceIdrx),
       apr: 4.8,
       trend24h: 0,
       lastUsedAt: new Date(),
@@ -52,7 +51,7 @@ export default function ConfirmPage() {
       isDefault: true,
       address: wallet.publicKey.toBase58(),
     };
-  }, [wallet.publicKey, balanceUsdc, draft.rate]);
+  }, [wallet.publicKey, balanceIdrx, draft.rate]);
 
   const program = useMemo(
     () => getSolpayProgram(connection, wallet),
@@ -61,12 +60,12 @@ export default function ConfirmPage() {
     [connection, wallet.publicKey?.toBase58(), wallet.connected],
   );
 
-  const amountUsdcRequired = draft.amountIdr / draft.rate;
+  const amountIdrxRequired = draft.amountIdr / draft.rate;
   const totalIdr = draft.amountIdr + draft.feeIdr;
-  const totalUsdcRequired = totalIdr / draft.rate;
+  const totalIdrxRequired = totalIdr / draft.rate;
   const connected = wallet.connected && !!wallet.publicKey;
   const insufficientBalance =
-    connected && !balLoading && balanceUsdc < totalUsdcRequired;
+    connected && !balLoading && balanceIdrx < totalIdrxRequired;
   const slideDisabled =
     !connected || !program || insufficientBalance || busy || balLoading;
 
@@ -78,7 +77,7 @@ export default function ConfirmPage() {
       return;
     }
     if (insufficientBalance) {
-      setError("Insufficient USDC balance. Top up on the Wallet page first.");
+      setError("Insufficient IDRX balance. Top up on the Wallet page first.");
       setResetKey((k) => k + 1);
       return;
     }
@@ -89,7 +88,7 @@ export default function ConfirmPage() {
         program,
         signTransaction: wallet.signTransaction!,
         payer: wallet.publicKey,
-        amountUsdc: totalUsdcRequired,
+        amountIdrx: totalIdrxRequired,
         amountIdr: totalIdr,
         merchantId: (draft.merchant.qrisId || draft.merchant.name || "MERCHANT").slice(0, 32),
         xenditReference: crypto.randomUUID(),
@@ -99,8 +98,8 @@ export default function ConfirmPage() {
         signature: result.signature,
         paymentPda: result.paymentPda,
         draft,
-        amountUsdc: totalUsdcRequired,
-        symbol: "USDC",
+        amountIdrx: totalIdrxRequired,
+        symbol: "IDRX",
         timestamp: Date.now(),
       });
 
@@ -140,7 +139,7 @@ export default function ConfirmPage() {
         <MotionItem>
           <AmountDisplay
             amountIdr={draft.amountIdr}
-            helper={`≈ ${amountUsdcRequired.toFixed(2)} USDC`}
+            helper={`≈ ${amountIdrxRequired.toLocaleString("id-ID")} IDRX`}
           />
         </MotionItem>
 
@@ -150,15 +149,15 @@ export default function ConfirmPage() {
           {!connected ? (
             <div className="flex flex-col items-start gap-3 rounded-xl border border-border-strong/60 bg-surface p-4">
               <p className="text-body-sm text-foreground-muted">
-                Connect your Phantom wallet to pay with USDC.
+                Connect your Phantom wallet to pay with IDRX.
               </p>
               <ConnectButton />
             </div>
-          ) : usdcWallet ? (
+          ) : idrxWallet ? (
             <WalletSelector
-              wallets={[usdcWallet]}
-              selectedId="w-usdc"
-              recommendedId="w-usdc"
+              wallets={[idrxWallet]}
+              selectedId="w-idrx"
+              recommendedId="w-idrx"
               onChange={() => {}}
             />
           ) : null}
@@ -169,7 +168,7 @@ export default function ConfirmPage() {
             amountIdr={draft.amountIdr}
             feeIdr={draft.feeIdr}
             rate={draft.rate}
-            symbol="USDC"
+            symbol="IDRX"
           />
         </MotionItem>
 
@@ -178,8 +177,8 @@ export default function ConfirmPage() {
             as="div"
             className="rounded-xl border border-warning/40 bg-warning/10 p-3.5 text-body-sm text-warning"
           >
-            Your USDC balance ({balanceUsdc.toFixed(2)} USDC) is not enough for
-            this payment ({totalUsdcRequired.toFixed(2)} USDC).{" "}
+            Your IDRX balance ({balanceIdrx.toLocaleString("id-ID")} IDRX) is not enough for
+            this payment ({totalIdrxRequired.toLocaleString("id-ID")} IDRX).{" "}
             <Link href="/wallet" className="font-semibold underline">
               Top up
             </Link>

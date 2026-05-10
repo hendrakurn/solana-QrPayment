@@ -62,10 +62,10 @@ export function MintUsdcButton({ onSuccess }: { onSuccess?: () => void }) {
       >
         <SparklesIcon className="size-4" />
         {status === "loading"
-          ? "Requesting USDC…"
+          ? "Requesting IDRX…"
           : status === "success"
-            ? "10 USDC sent to your wallet!"
-            : "Get 10 Free USDC"}
+            ? "Rp 50.000 IDRX sent to your wallet!"
+            : "Get Rp 50.000 Free IDRX"}
       </button>
       {error && (
         <p className="text-caption text-danger text-center px-1">{error}</p>

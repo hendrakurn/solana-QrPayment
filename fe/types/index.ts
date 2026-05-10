@@ -1,4 +1,4 @@
-export type StablecoinSymbol = "USDC";
+export type StablecoinSymbol = "IDRX";
 
 export interface Wallet {
   id: string;

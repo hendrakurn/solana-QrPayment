@@ -6,5 +6,5 @@ export const mockUser: UserProfile = {
   avatarSeed: "AR",
   country: "Indonesia",
   timezone: "Asia/Jakarta (GMT+7)",
-  defaultWalletId: "w-usdc-main",
+  defaultWalletId: "w-idrx-main",
 };

@@ -10,13 +10,13 @@ import { MintUsdcButton } from "@/components/wallet/mint-usdc-button";
 import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { RefreshIcon, LogOutIcon } from "@/components/icons";
 import { useWalletList } from "@/lib/solana/use-wallet-list";
-import { useUsdcBalance } from "@/lib/solana/use-usdc-balance";
+import { useIdrxBalance } from "@/lib/solana/use-usdc-balance";
 import { formatRupiah, truncateAddress } from "@/lib/format";
 import { Avatar } from "@/components/layout/avatar";
 
 export function WalletPageContent() {
   const { wallets, totalIdr, loading, error } = useWalletList();
-  const { refetch } = useUsdcBalance();
+  const { refetch } = useIdrxBalance();
   const { publicKey, disconnect } = useWallet();
   const [copied, setCopied] = useState(false);
 

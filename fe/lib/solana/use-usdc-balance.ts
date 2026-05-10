@@ -4,10 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
-import { getUsdcBalance } from "./balances";
-import { USDC_MINT } from "./config";
+import { getIdrxBalance } from "./balances";
+import { IDRX_MINT } from "./config";
 
-export interface UsdcBalanceState {
+export interface IdrxBalanceState {
   uiAmount: number;
   exists: boolean;
   ata: PublicKey | null;
@@ -16,13 +16,7 @@ export interface UsdcBalanceState {
   refetch: () => void;
 }
 
-/**
- * Live USDC balance for the currently-connected wallet. Refetches:
- *   - on wallet/connection change
- *   - when the window regains focus (user came back from Phantom popup)
- *   - via Solana account-change subscription on the ATA (websocket)
- */
-export function useUsdcBalance(): UsdcBalanceState {
+export function useIdrxBalance(): IdrxBalanceState {
   const { connection } = useConnection();
   const { publicKey } = useWallet();
 
@@ -47,7 +41,7 @@ export function useUsdcBalance(): UsdcBalanceState {
     setLoading(true);
     setError(null);
     try {
-      const b = await getUsdcBalance(connection, publicKey);
+      const b = await getIdrxBalance(connection, publicKey);
       if (id !== fetchIdRef.current) return; // stale
       setUiAmount(b.uiAmount);
       setExists(b.exists);
@@ -83,7 +77,7 @@ export function useUsdcBalance(): UsdcBalanceState {
 
     (async () => {
       try {
-        const ataAddr = await getAssociatedTokenAddress(USDC_MINT, publicKey);
+        const ataAddr = await getAssociatedTokenAddress(IDRX_MINT, publicKey);
         if (cancelled) return;
         subId = connection.onAccountChange(
           ataAddr,

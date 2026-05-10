@@ -35,7 +35,7 @@ export default function SuccessPage() {
   }
 
   const totalIdr = last.draft.amountIdr + last.draft.feeIdr;
-  const totalStable = last.amountUsdc;
+  const totalStable = last.amountIdrx;
   const explorerUrl = `https://explorer.solana.com/tx/${last.signature}?cluster=${SOLANA_CLUSTER}`;
 
   return (
@@ -66,7 +66,7 @@ export default function SuccessPage() {
           as="p"
           className="mt-2 max-w-[34ch] text-body text-foreground-muted"
         >
-          USDC has been sent to the SolPay vault. IDR settlement to{" "}
+          IDRX has been sent to the SolPay vault. IDR settlement to{" "}
           {last.draft.merchant.name} will follow via QRIS.
         </MotionItem>
 

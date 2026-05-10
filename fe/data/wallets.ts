@@ -4,12 +4,12 @@ const now = Date.now();
 
 export const mockWallets: Wallet[] = [
   {
-    id: "w-usdc-main",
-    symbol: "USDC",
+    id: "w-idrx-main",
+    symbol: "IDRX",
     network: "Solana",
-    label: "Main USDC",
-    balance: 2480.55,
-    fiatValue: 38_745_000,
+    label: "Main IDRX",
+    balance: 2_480_550,
+    fiatValue: 2_480_550,
     apr: 4.8,
     trend24h: 0.02,
     lastUsedAt: new Date(now - 1000 * 60 * 32),

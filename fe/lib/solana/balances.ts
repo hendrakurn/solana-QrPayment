@@ -5,25 +5,25 @@ import {
   TokenAccountNotFoundError,
   TokenInvalidAccountOwnerError,
 } from "@solana/spl-token";
-import { USDC_MINT, USDC_DECIMALS } from "./config";
+import { IDRX_MINT, IDRX_DECIMALS } from "./config";
 
-export interface UsdcBalance {
+export interface IdrxBalance {
   ata: PublicKey;
   uiAmount: number;
   rawAmount: bigint;
   exists: boolean;
 }
 
-export async function getUsdcBalance(
+export async function getIdrxBalance(
   connection: Connection,
   owner: PublicKey,
-): Promise<UsdcBalance> {
-  const ata = await getAssociatedTokenAddress(USDC_MINT, owner);
+): Promise<IdrxBalance> {
+  const ata = await getAssociatedTokenAddress(IDRX_MINT, owner);
   try {
     const acc = await getAccount(connection, ata);
     return {
       ata,
-      uiAmount: Number(acc.amount) / 10 ** USDC_DECIMALS,
+      uiAmount: Number(acc.amount) / 10 ** IDRX_DECIMALS,
       rawAmount: acc.amount,
       exists: true,
     };

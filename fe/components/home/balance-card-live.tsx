@@ -1,13 +1,11 @@
 "use client";
 
-import { useUsdcBalance } from "@/lib/solana/use-usdc-balance";
+import { useIdrxBalance } from "@/lib/solana/use-usdc-balance";
 import { BalanceCard } from "@/components/home/balance-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const RATE_IDR_PER_USDC = 15_640;
-
 export function BalanceCardLive() {
-  const { uiAmount, loading, error } = useUsdcBalance();
+  const { uiAmount, loading, error } = useIdrxBalance();
 
   if (loading && uiAmount === 0 && !error) {
     return (
@@ -23,7 +21,8 @@ export function BalanceCardLive() {
     );
   }
 
-  const totalIdr = Math.round(uiAmount * RATE_IDR_PER_USDC);
+  // 1 IDRX = 1 IDR
+  const totalIdr = Math.round(uiAmount);
 
   return <BalanceCard totalIdr={totalIdr} walletCount={1} trend24h={0} />;
 }

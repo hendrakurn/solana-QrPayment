@@ -8,15 +8,14 @@ import {
 } from "@solana/web3.js";
 import {
   getOrCreateAssociatedTokenAccount,
-  createTransferInstruction,
-  getAssociatedTokenAddress,
+  createMintToInstruction,
 } from "@solana/spl-token";
 
 const RPC = process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
-const USDC_MINT_ADDRESS =
-  process.env.NEXT_PUBLIC_USDC_MINT ?? "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
-const USDC_DECIMALS = 6;
-const FAUCET_AMOUNT = 10 * 10 ** USDC_DECIMALS; // 10 USDC
+const IDRX_MINT_ADDRESS =
+  process.env.NEXT_PUBLIC_IDRX_MINT ?? "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV";
+const IDRX_DECIMALS = 2;
+const FAUCET_AMOUNT = 50_000 * 10 ** IDRX_DECIMALS; // 50,000 IDRX = Rp 50.000
 
 // In-memory rate limit: 1 request per wallet per minute
 const lastRequest = new Map<string, number>();
@@ -62,21 +61,20 @@ export async function POST(req: NextRequest) {
     }
 
     const connection = new Connection(RPC, "confirmed");
-    const usdcMint = new PublicKey(USDC_MINT_ADDRESS);
+    const idrxMint = new PublicKey(IDRX_MINT_ADDRESS);
 
     // Ensure user ATA exists (faucet pays rent if needed)
     const userAta = await getOrCreateAssociatedTokenAccount(
       connection,
       faucetKeypair,
-      usdcMint,
+      idrxMint,
       userPubkey,
     );
 
-    const faucetAta = await getAssociatedTokenAddress(usdcMint, faucetKeypair.publicKey);
-
+    // Mint IDRX directly to user ATA — faucet keypair must be the mint authority
     const tx = new Transaction().add(
-      createTransferInstruction(
-        faucetAta,
+      createMintToInstruction(
+        idrxMint,
         userAta.address,
         faucetKeypair.publicKey,
         FAUCET_AMOUNT,
@@ -91,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       signature,
-      amount: FAUCET_AMOUNT / 10 ** USDC_DECIMALS,
+      amount: FAUCET_AMOUNT / 10 ** IDRX_DECIMALS,
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);

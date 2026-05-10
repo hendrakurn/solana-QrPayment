@@ -13,7 +13,7 @@ export const mockPaymentDraft: PaymentDraft = {
     verified: true,
   },
   amountIdr: 42_500,
-  recommendedWalletId: "w-usdc-main",
-  rate: 15_640,
+  recommendedWalletId: "w-idrx-main",
+  rate: 1,
   feeIdr: 350,
 };

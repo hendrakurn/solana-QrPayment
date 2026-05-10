@@ -9,17 +9,16 @@ import {
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import { USDC_MINT, USDC_DECIMALS } from "./config";
+import { IDRX_MINT, IDRX_DECIMALS } from "./config";
 import { derivePaymentPda } from "./pda";
 import { fetchVault } from "./vault";
 
 export interface PayParams {
   program: Program<Idl>;
-  /** Signs with the currently active Phantom account — not the stale provider wallet. */
   signTransaction: (tx: Transaction) => Promise<Transaction>;
   payer: PublicKey;
-  /** Human units, e.g. 2.71 means 2.71 USDC. Will be scaled by 10^6 internally. */
-  amountUsdc: number;
+  /** Human units, e.g. 2000 means 2000 IDRX (= Rp 2.000). Scaled by 10^2 internally. */
+  amountIdrx: number;
   /** Whole rupiah, e.g. 42500. */
   amountIdr: number;
   /** Max 32 chars per the program's PaymentRecord struct. */
@@ -32,7 +31,7 @@ export interface PayResult {
   signature: string;
   paymentPda: string;
   paymentCount: number;
-  amountUsdcRaw: string;
+  amountIdrxRaw: string;
   amountIdr: number;
 }
 
@@ -42,7 +41,7 @@ export interface PayResult {
  * Behavior:
  *  - Fetches the global Vault PDA to read the current `payment_count` and
  *    derive the next PaymentRecord PDA. Throws if the vault is not initialized.
- *  - If the connected wallet has no USDC associated token account, bundles a
+ *  - If the connected wallet has no IDRX associated token account, bundles a
  *    `createAssociatedTokenAccountInstruction` as a pre-instruction so the
  *    user only sees ONE Phantom popup for the whole flow.
  *  - Adds a small priority fee (1000 microLamports/CU) for resilience during
@@ -65,8 +64,8 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   const paymentCount = vault.paymentCount;
   const [paymentPda] = derivePaymentPda(vaultPda, paymentCount);
 
-  const vaultAta = await getAssociatedTokenAddress(USDC_MINT, vaultPda, true);
-  const payerAta = await getAssociatedTokenAddress(USDC_MINT, p.payer);
+  const vaultAta = await getAssociatedTokenAddress(IDRX_MINT, vaultPda, true);
+  const payerAta = await getAssociatedTokenAddress(IDRX_MINT, p.payer);
 
   // 2. Pre-instructions: priority fee + (optional) ATA creation if missing
   const preInstructions: TransactionInstruction[] = [
@@ -77,16 +76,16 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   if (!payerAtaInfo) {
     preInstructions.push(
       createAssociatedTokenAccountInstruction(
-        p.payer, // funder
+        p.payer,
         payerAta,
-        p.payer, // owner
-        USDC_MINT,
+        p.payer,
+        IDRX_MINT,
       ),
     );
   }
 
   // 3. Build instruction args (raw u64 = human × 10^6)
-  const amountUsdcRaw = new BN(Math.round(p.amountUsdc * 10 ** USDC_DECIMALS));
+  const amountIdrxRaw = new BN(Math.round(p.amountIdrx * 10 ** IDRX_DECIMALS));
   const amountIdrBn = new BN(p.amountIdr);
 
   // 4. Build unsigned transaction, explicitly set feePayer + blockhash,
@@ -94,15 +93,14 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   //    and send as a raw transaction — bypassing the stale-provider issue
   //    where AnchorProvider.sendAndConfirm used a captured (old) publicKey.
   const tx = await p.program.methods
-    .createPayment(amountUsdcRaw, amountIdrBn, p.merchantId, p.xenditReference)
+    .createPayment(amountIdrxRaw, amountIdrBn, p.merchantId, p.xenditReference)
     .accounts({
       payer: p.payer,
       vault: vaultPda,
       vaultTokenAccount: vaultAta,
       payerTokenAccount: payerAta,
-      usdcMint: USDC_MINT,
+      usdcMint: IDRX_MINT,
       paymentRecord: paymentPda,
-      // tokenProgram + systemProgram resolved via IDL `address` constants
     })
     .preInstructions(preInstructions)
     .transaction();
@@ -122,7 +120,7 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
     signature: sig,
     paymentPda: paymentPda.toBase58(),
     paymentCount: paymentCount.toNumber(),
-    amountUsdcRaw: amountUsdcRaw.toString(),
+    amountIdrxRaw: amountIdrxRaw.toString(),
     amountIdr: p.amountIdr,
   };
 }

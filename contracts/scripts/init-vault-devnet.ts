@@ -19,8 +19,8 @@ import { readFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
-const PROGRAM_ID = new PublicKey("35SH4CwgcAjTD23RFVvB63jANFo7cMraqMsKxRunHBdJ");
-const USDC_MINT = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+const PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? "35SH4CwgcAjTD23RFVvB63jANFo7cMraqMsKxRunHBdJ");
+const IDRX_MINT = new PublicKey(process.env.IDRX_MINT ?? "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const idlPath = resolve(__dirname, "../idl/solpay.json");
@@ -33,7 +33,7 @@ async function main() {
   console.log("Cluster:    ", provider.connection.rpcEndpoint);
   console.log("Authority:  ", provider.wallet.publicKey.toBase58());
   console.log("Program ID: ", PROGRAM_ID.toBase58());
-  console.log("USDC mint:  ", USDC_MINT.toBase58());
+  console.log("IDRX mint:  ", IDRX_MINT.toBase58());
 
   // Anchor 0.32: 2-arg constructor — programId read from idl.address
   const program = new Program(idl, provider);
@@ -42,7 +42,7 @@ async function main() {
     [Buffer.from("vault")],
     PROGRAM_ID,
   );
-  const vaultAta = await getAssociatedTokenAddress(USDC_MINT, vaultPda, true);
+  const vaultAta = await getAssociatedTokenAddress(IDRX_MINT, vaultPda, true);
 
   console.log("Vault PDA:  ", vaultPda.toBase58());
   console.log("Vault ATA:  ", vaultAta.toBase58());
@@ -52,7 +52,7 @@ async function main() {
     console.log("\nVault already initialized — nothing to do.");
     const v = await program.account.vault.fetch(vaultPda);
     console.log("authority:      ", (v as any).authority.toBase58());
-    console.log("usdcMint:       ", (v as any).usdcMint.toBase58());
+    console.log("tokenMint:      ", (v as any).usdcMint.toBase58());
     console.log("paymentCount:   ", (v as any).paymentCount.toString());
     console.log("totalReceived:  ", (v as any).totalReceived.toString());
     return;
@@ -64,7 +64,7 @@ async function main() {
     .accounts({
       authority: provider.wallet.publicKey,
       vault: vaultPda,
-      usdcMint: USDC_MINT,
+      usdcMint: IDRX_MINT,
       vaultTokenAccount: vaultAta,
     })
     .rpc({ commitment: "confirmed" });

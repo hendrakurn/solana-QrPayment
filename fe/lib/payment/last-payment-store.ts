@@ -7,7 +7,7 @@ export interface LastPayment {
   signature: string;
   paymentPda: string;
   draft: PaymentDraft;
-  amountUsdc: number;
+  amountIdrx: number;
   symbol: StablecoinSymbol;
   timestamp: number;
 }

@@ -2,7 +2,7 @@ import { AnchorProvider, BN, Program, type Idl } from "@coral-xyz/anchor";
 import { Connection, PublicKey, Transaction as Web3Tx } from "@solana/web3.js";
 import type { Transaction, TransactionStatus } from "@/types";
 import { SOLPAY_IDL } from "./idl";
-import { USDC_DECIMALS } from "./config";
+import { IDRX_DECIMALS } from "./config";
 
 /**
  * On-chain payload Anchor returns when decoding a `PaymentRecord` account.
@@ -93,20 +93,20 @@ export function mapPaymentRecord(
   const amountIdrRaw = toBN(account.amountIdr);
   const createdAtRaw = toBN(account.createdAt);
 
-  const amountUsdc = amountUsdcRaw.toNumber() / 10 ** USDC_DECIMALS;
+  const amountIdrx = amountUsdcRaw.toNumber() / 10 ** IDRX_DECIMALS;
   const amountIdr = amountIdrRaw.toNumber();
   // `created_at` is a unix timestamp in seconds (i64).
   const occurredAt = new Date(createdAtRaw.toNumber() * 1000);
-  const rate = amountUsdc > 0 ? amountIdr / amountUsdc : 0;
+  const rate = amountIdrx > 0 ? amountIdr / amountIdrx : 0;
 
   return {
     id: pubkey.toBase58(),
     merchant: deriveMerchantLabel(account.merchantId),
     category: DEFAULT_CATEGORY,
     amountIdr,
-    amountUsd: amountUsdc,
+    amountUsd: amountIdrx,
     walletId: account.payer.toBase58(),
-    symbol: "USDC",
+    symbol: "IDRX",
     status: mapStatus(account.status),
     occurredAt,
     reference: account.xenditReference || pubkey.toBase58().slice(0, 12),

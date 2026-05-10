@@ -4,7 +4,7 @@ const MESSAGES: Record<string, string> = {
   Unauthorized: "Unauthorized: only the vault admin can perform this action.",
   PaymentAlreadyProcessed: "This payment has already been processed.",
   PaymentNotPending: "Payment status is not pending.",
-  InsufficientBalance: "Insufficient USDC balance.",
+  InsufficientBalance: "Insufficient IDRX balance.",
   InvalidAmount: "Invalid amount (must be greater than zero).",
   InvalidMerchantId: "Invalid merchant ID.",
   ArithmeticOverflow: "Arithmetic overflow in the program.",

@@ -13,7 +13,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "SolPay — Pay anywhere with stablecoins",
   description:
-    "AI-powered crypto-to-QRIS payment bridge. Spend USDC and other stablecoins instantly across Indonesia.",
+    "AI-powered crypto-to-QRIS payment bridge. Spend IDRX (Indonesian Rupiah stablecoin) instantly across Indonesia.",
   applicationName: "SolPay",
 };
 

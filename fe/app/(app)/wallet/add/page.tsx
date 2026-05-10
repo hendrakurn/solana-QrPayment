@@ -7,7 +7,7 @@ import Link from "next/link";
 import type { StablecoinSymbol } from "@/types";
 
 const supported: { symbol: StablecoinSymbol; name: string; apr: string; tag?: string }[] = [
-  { symbol: "USDC", name: "USD Coin", apr: "4.8% APR", tag: "Most popular" },
+  { symbol: "IDRX", name: "IDRX (Rupiah)", apr: "0% APR", tag: "Supported" },
 ];
 
 export default function AddWalletPage() {
