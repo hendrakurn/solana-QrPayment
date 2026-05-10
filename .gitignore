@@ -17,3 +17,6 @@ dist/
 
 
 .claude/
+
+# reference codebases (not part of the project)
+ref/
