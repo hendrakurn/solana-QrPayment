@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/colosseum-copilot/SKILL.md",
       "computedHash": "7859139478a5276c63a6114f0c3f9899ca4a30b5e4239825d16b92e8744e9e07"
+    },
+    "frontend-god-mode": {
+      "source": "Shawnchee/frontend-god-mode",
+      "sourceType": "github",
+      "skillPath": "frontend-god-mode/SKILL.md",
+      "computedHash": "2bc68d33648308957ff29adff67954c0d78ad0804c72c03c1f43cb33def2090b"
     }
   }
 }
