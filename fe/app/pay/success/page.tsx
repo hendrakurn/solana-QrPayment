@@ -57,7 +57,7 @@ export default function SuccessPage() {
 
         <MotionItem
           as="div"
-          className="text-display font-semibold tracking-tight text-foreground"
+          className="text-display font-semibold tracking-tight text-accent-yellow"
         >
           <h1>Payment sent</h1>
         </MotionItem>

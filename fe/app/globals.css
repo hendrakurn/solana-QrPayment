@@ -20,15 +20,15 @@
  *   success (#1fd286)           on background (#000915) =  8.5:1 ✓
  */
 @theme inline {
-  /* Surfaces — Material 3 tonal scale, dark fintech */
-  --color-background: #000915;
-  --color-surface-low: #0a0e15;
+  /* Surfaces — purple-neutral tonal scale aligned with brand gradient */
+  --color-background: #09090d;
+  --color-surface-low: #09090d;
   --color-surface: #1c1c1d;
-  --color-surface-1: #181c23;
-  --color-surface-2: #1c2027;
-  --color-surface-3: #262a32;
-  --color-surface-4: #31353d;
-  --color-surface-bright: #353941;
+  --color-surface-1: #18181c;
+  --color-surface-2: #1f1f25;
+  --color-surface-3: #26262e;
+  --color-surface-4: #32323a;
+  --color-surface-bright: #37373f;
 
   /* Foreground / text (Stitch on-surface, on-surface-variant) */
   --color-foreground: #f6f6f6;
@@ -62,9 +62,9 @@
   --color-danger-deep: #93000a;
   --color-warning: #f5b021;
 
-  /* Borders — outline-variant from Stitch */
-  --color-border: #2a3142;
-  --color-border-strong: #404754;
+  /* Borders — purple-neutral aligned */
+  --color-border: #272736;
+  --color-border-strong: #3d3d4c;
 
   /* Typography */
   --font-sans: var(--font-outfit);
@@ -118,13 +118,13 @@
   --shadow-glow-success: 0 18px 40px -10px rgba(31, 210, 134, 0.55);
   --shadow-press-primary: 0 10px 30px -12px rgba(0, 136, 255, 0.65);
   --shadow-press-danger: 0 10px 30px -12px rgba(255, 180, 171, 0.45);
-  --shadow-glow-nav-active: 0 0 10px rgba(0, 136, 255, 0.5);
-  --shadow-avatar: 0 4px 16px -4px rgba(0, 136, 255, 0.55);
+  --shadow-glow-nav-active: 0 0 10px rgba(238, 159, 10, 0.45);
+  --shadow-avatar: 0 4px 16px -4px rgba(238, 159, 10, 0.40), 0 0 20px rgba(82, 32, 216, 0.25);
   --shadow-scanner-mask:
-    0 0 0 4000px rgba(0, 9, 21, 0.85),
-    0 0 30px 0 rgba(0, 136, 255, 0.25);
-  --shadow-scanner-corner: 0 0 15px rgba(0, 136, 255, 0.5);
-  --shadow-scanner-laser: 0 0 12px 3px rgba(0, 136, 255, 0.6);
+    0 0 0 4000px rgba(0, 0, 0, 0.82),
+    0 0 30px 0 rgba(238, 159, 10, 0.20);
+  --shadow-scanner-corner: 0 0 15px rgba(238, 159, 10, 0.55);
+  --shadow-scanner-laser: 0 0 12px 3px rgba(238, 159, 10, 0.70);
   --shadow-thumb: 0 4px 18px rgba(0, 0, 0, 0.45);
   --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.5);
 
@@ -137,10 +137,15 @@
   --duration-slow: 420ms;
 }
 
-/* Base body — dark-first fintech */
+/* Base body — dark purple / dark gray gradient brand bg */
 html,
 body {
   background-color: var(--color-background);
+  background-image:
+    radial-gradient(ellipse 110% 55% at 65% -5%, rgba(82, 32, 216, 0.32) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 45% at -5% 95%, rgba(82, 32, 216, 0.18) 0%, transparent 50%),
+    linear-gradient(180deg, #09090d 0%, #1c1c1d 55%, #09090d 100%);
+  min-height: 100dvh;
   color: var(--color-foreground);
 }
 

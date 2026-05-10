@@ -1,10 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * SolPay wordmark with the signature blue glow used across screens.
- * Rendered as plain text so it inherits font-weight and letter-spacing from
- * the global typography scale.
- */
 export function Wordmark({
   size = "md",
   className,
@@ -18,7 +13,7 @@ export function Wordmark({
     lg: "text-display font-semibold tracking-tight",
   };
   return (
-    <span className={cn("text-primary text-glow-primary", sizes[size], className)}>
+    <span className={cn("text-accent-yellow", sizes[size], className)}>
       SolPay
     </span>
   );

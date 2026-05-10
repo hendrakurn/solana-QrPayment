@@ -23,14 +23,14 @@ export default function HistoryPage() {
             <IconButton
               label="Sort"
               variant="ghost"
-              icon={<SortIcon className="size-5 text-primary" />}
+              icon={<SortIcon className="size-5 text-accent-yellow" />}
             />
           }
         />
       </MotionItem>
 
       <MotionItem as="header">
-        <h2 className="text-section font-semibold tracking-tight text-foreground">
+        <h2 className="text-section font-semibold tracking-tight text-accent-yellow">
           Transactions
         </h2>
       </MotionItem>

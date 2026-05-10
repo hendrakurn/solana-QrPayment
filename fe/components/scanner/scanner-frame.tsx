@@ -1,21 +1,14 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Camera viewfinder for QRIS scanning. The dim overlay is created with a
- * very wide outer shadow on the frame itself (Stitch Scanner V2 trick),
- * eliminating the need for a separate masking element. Glowing brackets
- * and a scanning laser provide the visual rhythm.
- */
 export function ScannerFrame({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative size-72 rounded-xl border border-primary/30",
+        "relative size-72 rounded-xl border border-accent-yellow/40",
         "shadow-[var(--shadow-scanner-mask)]",
         className,
       )}
     >
-      {/* Glowing corner accents */}
       <Bracket position="tl" />
       <Bracket position="tr" />
       <Bracket position="bl" />
@@ -24,7 +17,7 @@ export function ScannerFrame({ className }: { className?: string }) {
       {/* Scanning laser */}
       <span
         aria-hidden
-        className="absolute inset-x-0 top-0 mx-3 h-[2px] -translate-y-px bg-primary opacity-90 shadow-[var(--shadow-scanner-laser)] animate-scan-line"
+        className="absolute inset-x-0 top-0 mx-3 h-[2px] -translate-y-px bg-accent-yellow opacity-90 shadow-[var(--shadow-scanner-laser)] animate-scan-line"
       />
     </div>
   );
@@ -42,7 +35,7 @@ function Bracket({ position }: { position: keyof typeof positions }) {
     <span
       aria-hidden
       className={cn(
-        "absolute size-10 border-primary shadow-[var(--shadow-scanner-corner)]",
+        "absolute size-10 border-accent-yellow shadow-[var(--shadow-scanner-corner)]",
         positions[position],
       )}
     />

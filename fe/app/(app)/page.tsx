@@ -26,7 +26,7 @@ export default function HomePage() {
 
       <MotionItem as="section" className="flex flex-col gap-3">
         <div className="flex items-center justify-between px-0.5">
-          <span className="text-caption uppercase tracking-[0.16em] text-foreground-subtle font-medium">
+          <span className="text-caption uppercase tracking-[0.16em] text-accent-yellow font-medium">
             Recent
           </span>
           <Link

@@ -113,7 +113,7 @@ export default function SettingsPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="px-1 pb-2 text-caption font-semibold uppercase tracking-[0.16em] text-foreground-muted">
+      <h2 className="px-1 pb-2 text-caption font-semibold uppercase tracking-[0.16em] text-accent-yellow">
         {title}
       </h2>
       <div className="rounded-xl border border-border-strong/60 bg-surface overflow-hidden divide-y divide-border-strong/40">

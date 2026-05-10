@@ -12,7 +12,7 @@ export function SectionTitle({ title, caption, action, className }: SectionTitle
   return (
     <div className={cn("flex items-end justify-between gap-3", className)}>
       <div>
-        <h2 className="text-body font-semibold text-foreground tracking-tight">{title}</h2>
+        <h2 className="text-body font-semibold text-accent-yellow tracking-tight">{title}</h2>
         {caption ? (
           <p className="text-caption text-foreground-subtle mt-0.5">{caption}</p>
         ) : null}

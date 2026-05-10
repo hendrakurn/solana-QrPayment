@@ -56,7 +56,7 @@ export function MintUsdcButton({ onSuccess }: { onSuccess?: () => void }) {
             ? "border-success/40 bg-success/10 text-success"
             : status === "error"
               ? "border-danger/40 bg-danger/10 text-danger"
-              : "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:border-primary/50",
+              : "bg-gradient-to-r from-accent-purple to-accent-yellow border-transparent text-white hover:brightness-110",
           busy && "opacity-70 cursor-not-allowed active:scale-100",
         )}
       >

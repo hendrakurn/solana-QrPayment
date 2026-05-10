@@ -39,7 +39,7 @@ export function WalletPageContent() {
               <IconButton
                 variant="ghost"
                 label="Refresh balance"
-                icon={<RefreshIcon className="size-5 text-primary" />}
+                icon={<RefreshIcon className="size-5 text-accent-yellow" />}
                 onClick={() => refetch()}
               />
             ) : undefined
@@ -57,7 +57,7 @@ export function WalletPageContent() {
             <UserIcon className="size-12" />
           </span>
           <div>
-            <h2 className="text-section font-semibold text-foreground">Connect Wallet</h2>
+            <h2 className="text-section font-semibold text-accent-yellow">Connect Wallet</h2>
             <p className="mt-1 text-body-sm text-foreground-muted">
               Connect your Phantom wallet to view balance
             </p>
@@ -136,7 +136,7 @@ export function WalletPageContent() {
             <button
               type="button"
               onClick={() => disconnect().catch(() => {})}
-              className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-danger/40 bg-danger/8 text-body font-semibold text-danger hover:bg-danger/14 cursor-pointer transition-colors"
+              className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-danger/60 bg-danger/15 text-body font-semibold text-danger hover:bg-danger/25 hover:border-danger/75 cursor-pointer transition-colors"
             >
               <LogOutIcon className="size-5" />
               Disconnect Wallet

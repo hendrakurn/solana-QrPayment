@@ -24,7 +24,6 @@ export default function ScanPage() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Latches the first decode so the rAF loop doesn't double-fire navigation.
   const navigatedRef = useRef(false);
 
   const handleDecode = useCallback(
@@ -33,7 +32,6 @@ export default function ScanPage() {
       navigatedRef.current = true;
       const draft = parseQrisPayload(payload);
       setDraft(draft);
-      // Tiny delay so users see the "detected" pulse before route change.
       setTimeout(() => router.push("/pay/confirm"), 220);
     },
     [router, setDraft],
@@ -65,8 +63,9 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-background text-foreground select-none">
-      {/* Live camera feed */}
+    <div className="relative h-dvh w-full overflow-hidden text-foreground select-none">
+
+      {/* ── Live camera feed (body gradient shows as base when inactive) ── */}
       <video
         ref={videoRef}
         playsInline
@@ -77,34 +76,20 @@ export default function ScanPage() {
           status === "scanning" || detected ? "opacity-100" : "opacity-0",
         )}
       />
-      {/* Off-DOM canvas used by the decode loop */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Subtle dark vignette so the overlay UI stays readable on bright frames */}
+      {/* Vignette so overlay text stays readable over camera */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background/50"
       />
 
-      {/* Camera placeholder while permission is pending or unavailable */}
-      {status !== "scanning" && status !== "detected" && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 50% 30%, rgba(255,255,255,0.06), transparent 70%), radial-gradient(50% 40% at 80% 20%, rgba(238,159,10,0.08), transparent 70%), radial-gradient(50% 40% at 20% 80%, rgba(82,32,216,0.08), transparent 70%)",
-            filter: "blur(2px)",
-          }}
-        />
-      )}
-
       {/* Top action bar */}
-      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-edge pt-[calc(env(safe-area-inset-top)+16px)]">
+      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-10 pt-[calc(env(safe-area-inset-top)+24px)]">
         <Link
           href="/"
           aria-label="Close scanner"
-          className="size-12 inline-flex items-center justify-center rounded-pill border border-white/15 bg-surface-3/60 backdrop-blur-md text-foreground hover:bg-surface-3/80 cursor-pointer shadow-lg active:scale-95 transition-transform"
+          className="size-12 inline-flex items-center justify-center rounded-pill border border-white/20 bg-background/40 backdrop-blur-md text-foreground hover:border-white/35 cursor-pointer shadow-lg active:scale-95 transition-transform"
         >
           <CloseIcon />
         </Link>
@@ -112,13 +97,13 @@ export default function ScanPage() {
           type="button"
           onClick={() => setHelpOpen(true)}
           aria-label="Scanning help"
-          className="size-12 inline-flex items-center justify-center rounded-pill border border-white/15 bg-surface-3/60 backdrop-blur-md text-foreground hover:bg-surface-3/80 cursor-pointer shadow-lg active:scale-95 transition-transform"
+          className="size-12 inline-flex items-center justify-center rounded-pill border border-accent-yellow/40 bg-background/40 backdrop-blur-md text-accent-yellow hover:border-accent-yellow/60 cursor-pointer shadow-lg active:scale-95 transition-transform"
         >
           <HelpIcon />
         </button>
       </div>
 
-      {/* Scanner overlay — frame and guidance, centered */}
+      {/* Scanner overlay */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
         <ScannerFrame
           className={cn(
@@ -128,7 +113,7 @@ export default function ScanPage() {
         />
 
         <div className="mt-12 flex flex-col items-center gap-3 pointer-events-auto z-20 text-center">
-          <h1 className="text-display font-semibold tracking-tight text-foreground">
+          <h1 className="text-display font-semibold tracking-tight text-accent-yellow">
             {detected ? "QR Detected" : "Scan QRIS to Pay"}
           </h1>
           <span
@@ -137,8 +122,8 @@ export default function ScanPage() {
               detected
                 ? "border-success/40 bg-success/15 text-success"
                 : status === "requesting"
-                  ? "border-white/15 bg-surface-3/50 text-foreground-muted"
-                  : "border-white/15 bg-surface-3/50 text-primary",
+                  ? "border-white/15 bg-background/40 text-foreground-muted"
+                  : "border-accent-yellow/30 bg-accent-yellow/10 text-accent-yellow",
             )}
           >
             {detected
@@ -159,7 +144,7 @@ export default function ScanPage() {
                 <AlertIcon className="size-5" />
               </span>
               <div className="flex-1">
-                <h2 className="text-body font-semibold text-foreground">
+                <h2 className="text-body font-semibold text-accent-yellow">
                   Cannot open camera
                 </h2>
                 <p className="mt-1 text-body-sm text-foreground-muted">
@@ -172,7 +157,7 @@ export default function ScanPage() {
                       navigatedRef.current = false;
                       void restart();
                     }}
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-pill bg-primary px-4 text-body-sm font-semibold text-white hover:bg-primary-soft cursor-pointer transition-colors"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-pill bg-gradient-to-r from-accent-purple to-accent-yellow px-4 text-body-sm font-semibold text-white hover:brightness-110 cursor-pointer transition-all"
                   >
                     <RefreshIcon className="size-4" />
                     Try again
@@ -180,7 +165,7 @@ export default function ScanPage() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-pill border border-border-strong bg-surface px-4 text-body-sm font-semibold text-foreground hover:bg-surface-3 cursor-pointer transition-colors"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-pill border border-accent-yellow/40 bg-accent-yellow/10 px-4 text-body-sm font-semibold text-accent-yellow hover:bg-accent-yellow/20 cursor-pointer transition-colors"
                   >
                     <UploadIcon className="size-4" />
                     Upload QR
@@ -193,7 +178,7 @@ export default function ScanPage() {
       )}
 
       {/* Bottom action panel */}
-      <div className="absolute inset-x-0 bottom-0 z-30 pt-12 pb-[calc(env(safe-area-inset-bottom)+32px)] px-edge bg-gradient-to-t from-background via-background/85 to-transparent">
+      <div className="absolute inset-x-0 bottom-0 z-30 pt-12 pb-[calc(env(safe-area-inset-bottom)+32px)] px-edge bg-gradient-to-t from-background/90 via-background/50 to-transparent">
         {uploadError && (
           <div
             role="alert"
@@ -235,30 +220,19 @@ export default function ScanPage() {
 
       <Sheet open={helpOpen} onClose={() => setHelpOpen(false)} title="Scanning tips">
         <ul className="space-y-3 text-body-sm text-foreground-muted">
-          <li className="flex gap-3">
-            <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
-              1
-            </span>
-            <p>Make sure the QR is inside the frame and not blurry.</p>
-          </li>
-          <li className="flex gap-3">
-            <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
-              2
-            </span>
-            <p>Enable flash if the lighting is poor.</p>
-          </li>
-          <li className="flex gap-3">
-            <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
-              3
-            </span>
-            <p>For dynamic QRIS, wait until the cashier displays the code.</p>
-          </li>
-          <li className="flex gap-3">
-            <span className="size-6 mt-0.5 inline-flex items-center justify-center rounded-pill bg-primary/15 text-primary text-caption font-semibold">
-              4
-            </span>
-            <p>Can&apos;t scan directly? Use the &quot;Upload QR&quot; button to pick a QR photo from your gallery.</p>
-          </li>
+          {[
+            "Make sure the QR is inside the frame and not blurry.",
+            "Enable flash if the lighting is poor.",
+            "For dynamic QRIS, wait until the cashier displays the code.",
+            "Can't scan directly? Use the \"Upload QR\" button to pick a QR photo from your gallery.",
+          ].map((tip, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="size-6 mt-0.5 inline-flex shrink-0 items-center justify-center rounded-pill bg-accent-yellow/15 text-accent-yellow text-caption font-semibold">
+                {i + 1}
+              </span>
+              <p>{tip}</p>
+            </li>
+          ))}
         </ul>
       </Sheet>
     </div>
@@ -295,12 +269,12 @@ function ActionCircle({
           "inline-flex size-16 items-center justify-center rounded-pill border backdrop-blur-md shadow-lg transition-colors",
           active
             ? "bg-accent-yellow text-background border-accent-yellow"
-            : "bg-surface-3/80 border-white/15 text-primary group-hover:bg-surface-3",
+            : "bg-background/40 border-accent-yellow/35 text-accent-yellow group-hover:border-accent-yellow/55 group-hover:bg-background/55",
         )}
       >
         {icon}
       </span>
-      <span className="text-caption text-foreground-muted group-hover:text-foreground transition-colors">
+      <span className="text-caption text-foreground-muted group-hover:text-accent-yellow transition-colors">
         {label}
       </span>
     </button>

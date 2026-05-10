@@ -14,7 +14,7 @@ export function Avatar({
       aria-hidden
       style={{ width: size, height: size }}
       className={cn(
-        "inline-flex items-center justify-center rounded-pill text-body-sm font-semibold text-white bg-gradient-to-br from-primary via-primary-soft to-accent-purple shadow-[var(--shadow-avatar)]",
+        "inline-flex items-center justify-center rounded-pill text-body-sm font-semibold text-white bg-gradient-to-br from-accent-purple via-[#8520e8] to-accent-yellow shadow-[var(--shadow-avatar)]",
         className,
       )}
     >

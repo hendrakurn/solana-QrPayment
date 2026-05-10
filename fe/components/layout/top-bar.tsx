@@ -61,7 +61,7 @@ export function TopBar({
 
           {title && !showWordmark ? (
             <div className="min-w-0">
-              <h1 className="text-body font-semibold tracking-tight text-foreground truncate">
+              <h1 className="text-body font-semibold tracking-tight text-accent-yellow truncate">
                 {title}
               </h1>
               {subtitle ? (

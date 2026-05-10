@@ -145,7 +145,7 @@ export default function ConfirmPage() {
         </MotionItem>
 
         <MotionItem as="section" className="flex flex-col gap-3">
-          <h3 className="text-body font-semibold text-foreground">Payment source</h3>
+          <h3 className="text-body font-semibold text-accent-yellow">Payment source</h3>
 
           {!connected ? (
             <div className="flex flex-col items-start gap-3 rounded-xl border border-border-strong/60 bg-surface p-4">
