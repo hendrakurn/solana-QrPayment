@@ -18,12 +18,12 @@ pub struct InitializeVault<'info> {
     )]
     pub vault: Account<'info, Vault>,
 
-    pub usdc_mint: Account<'info, Mint>,
+    pub idrx_mint: Account<'info, Mint>,
 
     #[account(
         init,
         payer = authority,
-        associated_token::mint = usdc_mint,
+        associated_token::mint = idrx_mint,
         associated_token::authority = vault,
     )]
     pub vault_token_account: Account<'info, TokenAccount>,
@@ -36,7 +36,7 @@ pub struct InitializeVault<'info> {
 pub fn handler(ctx: Context<InitializeVault>) -> Result<()> {
     let vault = &mut ctx.accounts.vault;
     vault.authority = ctx.accounts.authority.key();
-    vault.usdc_mint = ctx.accounts.usdc_mint.key();
+    vault.idrx_mint = ctx.accounts.idrx_mint.key();
     vault.vault_token_account = ctx.accounts.vault_token_account.key();
     vault.total_received = 0;
     vault.total_settled = 0;

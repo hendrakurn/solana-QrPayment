@@ -15,7 +15,7 @@ describe("solpay", () => {
   anchor.setProvider(provider);
   const program = anchor.workspace.Solpay as Program<Solpay>;
 
-  let usdcMint: anchor.web3.PublicKey;
+  let idrxMint: anchor.web3.PublicKey;
   let vaultPda: anchor.web3.PublicKey;
   let vaultBump: number;
   let vaultTokenAccount: anchor.web3.PublicKey;
@@ -24,7 +24,7 @@ describe("solpay", () => {
   const authority = (provider.wallet as any).payer as anchor.web3.Keypair;
 
   before(async () => {
-    usdcMint = await createMint(
+    idrxMint = await createMint(
       provider.connection,
       authority,
       authority.publicKey,
@@ -40,21 +40,20 @@ describe("solpay", () => {
     payerTokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       authority,
-      usdcMint,
+      idrxMint,
       authority.publicKey
     );
 
     await mintTo(
       provider.connection,
       authority,
-      usdcMint,
-      payerTokenAccount,
+      idrxMint,
       authority.publicKey,
       100_000_000_000 // 100,000 USDC
     );
 
     vaultTokenAccount = await getAssociatedTokenAddress(
-      usdcMint,
+      idrxMint,
       vaultPda,
       true
     );
@@ -65,16 +64,14 @@ describe("solpay", () => {
       .initializeVault()
       .accounts({
         authority: authority.publicKey,
-        vault: vaultPda,
-        usdcMint,
-        vaultTokenAccount,
+        idrxMint,
       })
       .signers([authority])
       .rpc();
 
     const vault = await program.account.vault.fetch(vaultPda);
     assert.equal(vault.authority.toString(), authority.publicKey.toString());
-    assert.equal(vault.usdcMint.toString(), usdcMint.toString());
+    assert.equal(vault.idrxMint.toString(), idrxMint.toString());
     assert.equal(vault.totalReceived.toNumber(), 0);
     assert.equal(vault.totalSettled.toNumber(), 0);
     assert.equal(vault.totalRefunded.toNumber(), 0);
@@ -91,7 +88,7 @@ describe("solpay", () => {
       program.programId
     );
 
-    const amountUsdc = new BN(3_200_000); // 3.2 USDC
+    const amountIdrx = new BN(3_200_000); // 3.2 USDC
     const amountIdr = new BN(50_000);
     const merchantId = "MERCHANT001";
     const xenditRef = "xendit-ref-001";
@@ -101,20 +98,16 @@ describe("solpay", () => {
     ).amount;
 
     await program.methods
-      .createPayment(amountUsdc, amountIdr, merchantId, xenditRef)
+      .createPayment(amountIdrx, amountIdr, merchantId, xenditRef)
       .accounts({
         payer: authority.publicKey,
-        vault: vaultPda,
-        vaultTokenAccount,
-        payerTokenAccount,
-        usdcMint,
-        paymentRecord: paymentPda,
+        idrxMint,
       })
       .signers([authority])
       .rpc();
 
     const payment = await program.account.paymentRecord.fetch(paymentPda);
-    assert.equal(payment.amountUsdc.toNumber(), 3_200_000);
+    assert.equal(payment.amountIdrx.toNumber(), 3_200_000);
     assert.equal(payment.amountIdr.toNumber(), 50_000);
     assert.equal(payment.merchantId, merchantId);
     assert.equal(payment.xenditReference, xenditRef);
@@ -147,8 +140,6 @@ describe("solpay", () => {
       .confirmPayment()
       .accounts({
         authority: authority.publicKey,
-        vault: vaultPda,
-        paymentRecord: paymentPda,
       })
       .signers([authority])
       .rpc();
@@ -173,8 +164,6 @@ describe("solpay", () => {
         .confirmPayment()
         .accounts({
           authority: authority.publicKey,
-          vault: vaultPda,
-          paymentRecord: paymentPda,
         })
         .signers([authority])
         .rpc();
@@ -194,22 +183,18 @@ describe("solpay", () => {
       program.programId
     );
 
-    const amountUsdc = new BN(1_000_000); // 1 USDC
+    const amountIdrx = new BN(1_000_000); // 1 USDC
 
     await program.methods
       .createPayment(
-        amountUsdc,
+        amountIdrx,
         new BN(15_600),
         "MERCHANT002",
         "xendit-ref-002"
       )
       .accounts({
         payer: authority.publicKey,
-        vault: vaultPda,
-        vaultTokenAccount,
-        payerTokenAccount,
-        usdcMint,
-        paymentRecord: paymentPda,
+        idrxMint,
       })
       .signers([authority])
       .rpc();
@@ -222,12 +207,8 @@ describe("solpay", () => {
       .refundPayment()
       .accounts({
         authority: authority.publicKey,
-        vault: vaultPda,
-        vaultTokenAccount,
-        payerTokenAccount,
         payer: authority.publicKey,
-        usdcMint,
-        paymentRecord: paymentPda,
+        idrxMint,
       })
       .signers([authority])
       .rpc();

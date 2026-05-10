@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct Vault {
     pub authority: Pubkey,
-    pub usdc_mint: Pubkey,
+    pub idrx_mint: Pubkey,
     pub vault_token_account: Pubkey,
     pub total_received: u64,
     pub total_settled: u64,
@@ -18,7 +18,7 @@ pub struct Vault {
 pub struct PaymentRecord {
     pub payer: Pubkey,
     pub vault: Pubkey,
-    pub amount_usdc: u64,
+    pub amount_idrx: u64,
     pub amount_idr: u64,
     #[max_len(32)]
     pub merchant_id: String,

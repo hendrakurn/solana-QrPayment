@@ -43,13 +43,12 @@ export interface PayResult {
  *    derive the next PaymentRecord PDA. Throws if the vault is not initialized.
  *  - If the connected wallet has no IDRX associated token account, bundles a
  *    `createAssociatedTokenAccountInstruction` as a pre-instruction so the
- *    user only sees ONE Phantom popup for the whole flow.
+ *    user only sees ONE wallet popup for the whole flow.
  *  - Adds a small priority fee (1000 microLamports/CU) for resilience during
  *    devnet congestion.
- *  - Skips an explicit `simulateTransaction` call: doing one with Anchor's
- *    `MethodsBuilder.simulate()` triggers a second Phantom signature popup,
- *    which degrades UX. The default RPC preflight (run server-side after
- *    Phantom signs) covers program-level rejections.
+ *  - Simulates the transaction client-side BEFORE sending to the wallet so
+ *    that failures surface as a readable error in our UI instead of the
+ *    wallet's "funds may be lost" simulation warning.
  *
  * Race note: between fetching `payment_count` and the program executing,
  * another payer could increment the counter, causing the `init` constraint to
@@ -84,14 +83,11 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
     );
   }
 
-  // 3. Build instruction args (raw u64 = human × 10^6)
+  // 3. Build instruction args (raw u64 = human × 10^2)
   const amountIdrxRaw = new BN(Math.round(p.amountIdrx * 10 ** IDRX_DECIMALS));
   const amountIdrBn = new BN(p.amountIdr);
 
-  // 4. Build unsigned transaction, explicitly set feePayer + blockhash,
-  //    then sign via the wallet adapter (always the current active account)
-  //    and send as a raw transaction — bypassing the stale-provider issue
-  //    where AnchorProvider.sendAndConfirm used a captured (old) publicKey.
+  // 4. Build unsigned transaction with blockhash + feePayer
   const tx = await p.program.methods
     .createPayment(amountIdrxRaw, amountIdrBn, p.merchantId, p.xenditReference)
     .accounts({
@@ -109,9 +105,23 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   tx.recentBlockhash = blockhash;
   tx.feePayer = p.payer;
 
+  // 5. Simulate before asking wallet to sign.
+  //    This catches program errors early so our UI shows a readable message
+  //    instead of the wallet's generic "simulation failed" warning.
+  // Omit signers arg → web3.js sends sigVerify:false to RPC, no signature needed
+  const sim = await conn.simulateTransaction(tx);
+  if (sim.value.err) {
+    const logs = sim.value.logs ?? [];
+    const anchorLog = logs.find((l) => l.includes("AnchorError") || l.includes("Error Code:"));
+    const programFailed = logs.find((l) => l.includes("failed to complete") || l.includes("Custom"));
+    const detail = anchorLog ?? programFailed ?? JSON.stringify(sim.value.err);
+    throw new SimulationError(detail, logs);
+  }
+
+  // 6. Sign via wallet adapter and broadcast
   const signedTx = await p.signTransaction(tx);
   const sig = await conn.sendRawTransaction(signedTx.serialize(), {
-    skipPreflight: false,
+    skipPreflight: true,
     preflightCommitment: "confirmed",
   });
   await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, "confirmed");
@@ -123,4 +133,13 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
     amountIdrxRaw: amountIdrxRaw.toString(),
     amountIdr: p.amountIdr,
   };
+}
+
+export class SimulationError extends Error {
+  logs: string[];
+  constructor(message: string, logs: string[]) {
+    super(message);
+    this.name = "SimulationError";
+    this.logs = logs;
+  }
 }

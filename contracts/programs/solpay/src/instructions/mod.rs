@@ -1,10 +1,12 @@
 #![allow(ambiguous_glob_reexports)]
 
+pub mod close_vault;
 pub mod confirm_payment;
 pub mod create_payment;
 pub mod initialize_vault;
 pub mod refund_payment;
 
+pub use close_vault::*;
 pub use confirm_payment::*;
 pub use create_payment::*;
 pub use initialize_vault::*;

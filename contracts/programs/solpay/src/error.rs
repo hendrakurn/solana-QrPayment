@@ -8,7 +8,7 @@ pub enum SolPayError {
     PaymentAlreadyProcessed,
     #[msg("Payment not in pending status")]
     PaymentNotPending,
-    #[msg("Insufficient USDC balance")]
+    #[msg("Insufficient IDRX balance")]
     InsufficientBalance,
     #[msg("Invalid amount: must be greater than zero")]
     InvalidAmount,

@@ -20,7 +20,7 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? "35SH4CwgcAjTD23RFVvB63jANFo7cMraqMsKxRunHBdJ");
-const IDRX_MINT = new PublicKey(process.env.IDRX_MINT ?? "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV");
+const IDRX_MINT = new PublicKey(process.env.IDRX_MINT ?? "FDaKsnp8yT3LW8kTPz8uQZQjQ4EGr5PdmQEkpBTqFbCM");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const idlPath = resolve(__dirname, "../idl/solpay.json");
@@ -50,7 +50,7 @@ async function main() {
   const existing = await provider.connection.getAccountInfo(vaultPda);
   if (existing) {
     console.log("\nVault already initialized — nothing to do.");
-    const v = await program.account.vault.fetch(vaultPda);
+    const v = await (program.account as any).vault.fetch(vaultPda);
     console.log("authority:      ", (v as any).authority.toBase58());
     console.log("tokenMint:      ", (v as any).usdcMint.toBase58());
     console.log("paymentCount:   ", (v as any).paymentCount.toString());

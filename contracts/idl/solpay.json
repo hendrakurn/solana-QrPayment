@@ -8,6 +8,49 @@
   },
   "instructions": [
     {
+      "name": "close_vault",
+      "discriminator": [
+        141,
+        103,
+        17,
+        126,
+        72,
+        75,
+        29,
+        29
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "confirm_payment",
       "discriminator": [
         221,
@@ -133,7 +176,7 @@
               },
               {
                 "kind": "account",
-                "path": "usdc_mint"
+                "path": "idrx_mint"
               }
             ],
             "program": {
@@ -223,7 +266,7 @@
               },
               {
                 "kind": "account",
-                "path": "usdc_mint"
+                "path": "idrx_mint"
               }
             ],
             "program": {
@@ -266,7 +309,7 @@
           }
         },
         {
-          "name": "usdc_mint"
+          "name": "idrx_mint"
         },
         {
           "name": "payment_record",
@@ -308,7 +351,7 @@
       ],
       "args": [
         {
-          "name": "amount_usdc",
+          "name": "amount_idrx",
           "type": "u64"
         },
         {
@@ -362,7 +405,7 @@
           }
         },
         {
-          "name": "usdc_mint"
+          "name": "idrx_mint"
         },
         {
           "name": "vault_token_account",
@@ -412,7 +455,7 @@
               },
               {
                 "kind": "account",
-                "path": "usdc_mint"
+                "path": "idrx_mint"
               }
             ],
             "program": {
@@ -552,7 +595,7 @@
               },
               {
                 "kind": "account",
-                "path": "usdc_mint"
+                "path": "idrx_mint"
               }
             ],
             "program": {
@@ -642,7 +685,7 @@
               },
               {
                 "kind": "account",
-                "path": "usdc_mint"
+                "path": "idrx_mint"
               }
             ],
             "program": {
@@ -688,7 +731,7 @@
           "name": "payer"
         },
         {
-          "name": "usdc_mint"
+          "name": "idrx_mint"
         },
         {
           "name": "payment_record",
@@ -749,7 +792,7 @@
     {
       "code": 6003,
       "name": "InsufficientBalance",
-      "msg": "Insufficient USDC balance"
+      "msg": "Insufficient IDRX balance"
     },
     {
       "code": 6004,
@@ -782,7 +825,7 @@
             "type": "pubkey"
           },
           {
-            "name": "amount_usdc",
+            "name": "amount_idrx",
             "type": "u64"
           },
           {
@@ -850,7 +893,7 @@
             "type": "pubkey"
           },
           {
-            "name": "usdc_mint",
+            "name": "idrx_mint",
             "type": "pubkey"
           },
           {

@@ -33,7 +33,7 @@ pub fn handler(ctx: Context<ConfirmPayment>) -> Result<()> {
     let vault = &mut ctx.accounts.vault;
     vault.total_settled = vault
         .total_settled
-        .checked_add(payment.amount_usdc)
+        .checked_add(payment.amount_idrx)
         .ok_or(SolPayError::ArithmeticOverflow)?;
 
     Ok(())

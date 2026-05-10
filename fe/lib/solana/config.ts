@@ -14,7 +14,7 @@ export const SOLPAY_PROGRAM_ID = new PublicKey(
 // Devnet: create via `spl-token create-token --decimals 2`
 export const IDRX_MINT = new PublicKey(
   process.env.NEXT_PUBLIC_IDRX_MINT ??
-    "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV",
+    "FDaKsnp8yT3LW8kTPz8uQZQjQ4EGr5PdmQEkpBTqFbCM",
 );
 export const IDRX_DECIMALS = 2;
 

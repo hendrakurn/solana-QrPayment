@@ -18,14 +18,14 @@ pub mod solpay {
 
     pub fn create_payment(
         ctx: Context<CreatePayment>,
-        amount_usdc: u64,
+        amount_idrx: u64,
         amount_idr: u64,
         merchant_id: String,
         xendit_reference: String,
     ) -> Result<()> {
         instructions::create_payment::handler(
             ctx,
-            amount_usdc,
+            amount_idrx,
             amount_idr,
             merchant_id,
             xendit_reference,
@@ -38,5 +38,9 @@ pub mod solpay {
 
     pub fn refund_payment(ctx: Context<RefundPayment>) -> Result<()> {
         instructions::refund_payment::handler(ctx)
+    }
+
+    pub fn close_vault(ctx: Context<CloseVault>) -> Result<()> {
+        instructions::close_vault::handler(ctx)
     }
 }

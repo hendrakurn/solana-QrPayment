@@ -13,7 +13,7 @@ import {
 
 const RPC = process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
 const IDRX_MINT_ADDRESS =
-  process.env.NEXT_PUBLIC_IDRX_MINT ?? "idrxPLMkXJnbFzMbFLXBMaJXHLwSEBKRmvKPMT5QNTV";
+  process.env.NEXT_PUBLIC_IDRX_MINT ?? "FDaKsnp8yT3LW8kTPz8uQZQjQ4EGr5PdmQEkpBTqFbCM";
 const IDRX_DECIMALS = 2;
 const FAUCET_AMOUNT = 50_000 * 10 ** IDRX_DECIMALS; // 50,000 IDRX = Rp 50.000
 

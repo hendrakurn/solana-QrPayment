@@ -11,7 +11,7 @@ import { IDRX_DECIMALS } from "./config";
 interface OnChainPaymentRecord {
   payer: PublicKey;
   vault: PublicKey;
-  amountUsdc: BN;
+  amountIdrx: BN;
   amountIdr: BN;
   merchantId: string;
   status: {
@@ -89,11 +89,11 @@ export function mapPaymentRecord(
   pubkey: PublicKey,
   account: OnChainPaymentRecord,
 ): Transaction {
-  const amountUsdcRaw = toBN(account.amountUsdc);
+  const amountIdrxRaw = toBN(account.amountIdrx);
   const amountIdrRaw = toBN(account.amountIdr);
   const createdAtRaw = toBN(account.createdAt);
 
-  const amountIdrx = amountUsdcRaw.toNumber() / 10 ** IDRX_DECIMALS;
+  const amountIdrx = amountIdrxRaw.toNumber() / 10 ** IDRX_DECIMALS;
   const amountIdr = amountIdrRaw.toNumber();
   // `created_at` is a unix timestamp in seconds (i64).
   const occurredAt = new Date(createdAtRaw.toNumber() * 1000);

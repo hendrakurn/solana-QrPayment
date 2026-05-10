@@ -15,7 +15,7 @@ solpay = "35SH4CwgcAjTD23RFVvB63jANFo7cMraqMsKxRunHBdJ"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "./wallet.json"
 
 [scripts]

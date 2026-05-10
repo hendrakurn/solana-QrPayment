@@ -20,14 +20,14 @@ pub struct RefundPayment<'info> {
 
     #[account(
         mut,
-        associated_token::mint = usdc_mint,
+        associated_token::mint = idrx_mint,
         associated_token::authority = vault,
     )]
     pub vault_token_account: Account<'info, TokenAccount>,
 
     #[account(
         mut,
-        associated_token::mint = usdc_mint,
+        associated_token::mint = idrx_mint,
         associated_token::authority = payer,
     )]
     pub payer_token_account: Account<'info, TokenAccount>,
@@ -38,7 +38,7 @@ pub struct RefundPayment<'info> {
     )]
     pub payer: UncheckedAccount<'info>,
 
-    pub usdc_mint: Account<'info, Mint>,
+    pub idrx_mint: Account<'info, Mint>,
 
     #[account(
         mut,
@@ -51,14 +51,14 @@ pub struct RefundPayment<'info> {
 }
 
 pub fn handler(ctx: Context<RefundPayment>) -> Result<()> {
-    let amount = ctx.accounts.payment_record.amount_usdc;
+    let amount = ctx.accounts.payment_record.amount_idrx;
 
     let seeds = &[b"vault".as_ref(), &[ctx.accounts.vault.bump]];
     let signer_seeds = &[&seeds[..]];
 
     let transfer_accounts = TransferChecked {
         from: ctx.accounts.vault_token_account.to_account_info(),
-        mint: ctx.accounts.usdc_mint.to_account_info(),
+        mint: ctx.accounts.idrx_mint.to_account_info(),
         to: ctx.accounts.payer_token_account.to_account_info(),
         authority: ctx.accounts.vault.to_account_info(),
     };
@@ -67,7 +67,7 @@ pub fn handler(ctx: Context<RefundPayment>) -> Result<()> {
         transfer_accounts,
         signer_seeds,
     );
-    token::transfer_checked(cpi_ctx, amount, ctx.accounts.usdc_mint.decimals)?;
+    token::transfer_checked(cpi_ctx, amount, ctx.accounts.idrx_mint.decimals)?;
 
     let payment = &mut ctx.accounts.payment_record;
     payment.status = PaymentStatus::Refunded;
