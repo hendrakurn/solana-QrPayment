@@ -3,13 +3,12 @@ import {
   Connection,
   Keypair,
   PublicKey,
-  Transaction,
-  sendAndConfirmTransaction,
+  SendTransactionError,
 } from "@solana/web3.js";
 import {
+  getMint,
   getOrCreateAssociatedTokenAccount,
-  createTransferInstruction,
-  getAssociatedTokenAddress,
+  mintTo,
 } from "@solana/spl-token";
 
 const RPC = process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
@@ -63,6 +62,24 @@ export async function POST(req: NextRequest) {
 
     const connection = new Connection(RPC, "confirmed");
     const idrxMint = new PublicKey(IDRX_MINT_ADDRESS);
+    const mintInfo = await getMint(connection, idrxMint);
+
+    if (!mintInfo.mintAuthority) {
+      return NextResponse.json(
+        { error: "IDRX mint has no mint authority. Faucet cannot mint new tokens." },
+        { status: 409 },
+      );
+    }
+
+    if (!mintInfo.mintAuthority.equals(faucetKeypair.publicKey)) {
+      return NextResponse.json(
+        {
+          error:
+            "FAUCET_KEYPAIR_JSON is not the mint authority for NEXT_PUBLIC_IDRX_MINT. Update the server keypair or mint config.",
+        },
+        { status: 409 },
+      );
+    }
 
     // Ensure user ATA exists (faucet pays rent if needed)
     const userAta = await getOrCreateAssociatedTokenAccount(
@@ -72,20 +89,16 @@ export async function POST(req: NextRequest) {
       userPubkey,
     );
 
-    const faucetAta = await getAssociatedTokenAddress(idrxMint, faucetKeypair.publicKey);
-
-    const tx = new Transaction().add(
-      createTransferInstruction(
-        faucetAta,
-        userAta.address,
-        faucetKeypair.publicKey,
-        FAUCET_AMOUNT,
-      ),
+    const signature = await mintTo(
+      connection,
+      faucetKeypair,
+      idrxMint,
+      userAta.address,
+      faucetKeypair,
+      FAUCET_AMOUNT,
+      [],
+      { commitment: "confirmed" },
     );
-
-    const signature = await sendAndConfirmTransaction(connection, tx, [faucetKeypair], {
-      commitment: "confirmed",
-    });
 
     lastRequest.set(wallet, Date.now());
 
@@ -94,7 +107,21 @@ export async function POST(req: NextRequest) {
       amount: FAUCET_AMOUNT / 10 ** IDRX_DECIMALS,
     });
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : String(e);
+    let message = e instanceof Error ? e.message : String(e);
+
+    if (e instanceof SendTransactionError) {
+      const logs = await e.getLogs().catch(() => []);
+      if (logs.some((line) => line.includes("owner does not match"))) {
+        message =
+          "FAUCET_KEYPAIR_JSON is not the mint authority for NEXT_PUBLIC_IDRX_MINT. Update the server keypair or mint config.";
+      } else if (logs.some((line) => line.includes("insufficient funds"))) {
+        message =
+          "Faucet wallet does not have enough SOL to pay transaction fees or ATA creation.";
+      } else if (logs.length) {
+        message = `${message}\n${logs.join("\n")}`;
+      }
+    }
+
     console.error("[faucet]", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }

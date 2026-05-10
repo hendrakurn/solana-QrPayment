@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { WalletReadyState } from "@solana/wallet-adapter-base";
@@ -10,8 +10,14 @@ import { MotionSection, MotionItem } from "@/components/motion/motion-section";
 import { UserIcon } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const subscribe = () => () => {};
+
+function useHasHydrated() {
+  return useSyncExternalStore(subscribe, () => true, () => false);
+}
+
 function DisconnectedState() {
-  const { select, wallets } = useWallet();
+  const { wallets, wallet, select, connect } = useWallet();
   const { setVisible } = useWalletModal();
 
   const phantom = wallets.find((w) => w.adapter.name === "Phantom");
@@ -20,14 +26,22 @@ function DisconnectedState() {
     phantom.readyState !== WalletReadyState.NotDetected &&
     phantom.readyState !== WalletReadyState.Unsupported;
 
-  function handleConnect() {
-    if (canConnectDirect) {
-      // Bypass modal — select Phantom, autoConnect effect fires adapter.connect()
-      // which triggers the Phantom extension popup directly
-      select("Phantom" as WalletName);
-    } else {
-      // Phantom not installed — open modal (shows "Get Phantom" install link)
+  async function handleConnect() {
+    if (!phantom || !canConnectDirect) {
       setVisible(true);
+      return;
+    }
+
+    try {
+      if (wallet?.adapter.name !== "Phantom") {
+        select("Phantom" as WalletName);
+        await phantom.adapter.connect();
+        return;
+      }
+
+      await connect();
+    } catch {
+      // User rejected or Phantom aborted; keep UI in disconnected state.
     }
   }
 
@@ -54,7 +68,9 @@ function DisconnectedState() {
         </div>
         <button
           type="button"
-          onClick={handleConnect}
+          onClick={() => {
+            void handleConnect();
+          }}
           className="inline-flex h-tap items-center justify-center gap-2 rounded-xl bg-primary px-8 text-body font-semibold text-white shadow-[var(--shadow-glow-soft)] hover:bg-primary-soft cursor-pointer transition-colors"
         >
           {label}
@@ -81,12 +97,8 @@ function LoadingState() {
 }
 
 export function WalletGate({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasHydrated();
   const { connected, connecting } = useWallet();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || connecting) return <LoadingState />;
   if (!connected) return <DisconnectedState />;
