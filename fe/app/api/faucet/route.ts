@@ -8,7 +8,8 @@ import {
 } from "@solana/web3.js";
 import {
   getOrCreateAssociatedTokenAccount,
-  createMintToInstruction,
+  createTransferInstruction,
+  getAssociatedTokenAddress,
 } from "@solana/spl-token";
 
 const RPC = process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.devnet.solana.com";
@@ -71,10 +72,11 @@ export async function POST(req: NextRequest) {
       userPubkey,
     );
 
-    // Mint IDRX directly to user ATA — faucet keypair must be the mint authority
+    const faucetAta = await getAssociatedTokenAddress(idrxMint, faucetKeypair.publicKey);
+
     const tx = new Transaction().add(
-      createMintToInstruction(
-        idrxMint,
+      createTransferInstruction(
+        faucetAta,
         userAta.address,
         faucetKeypair.publicKey,
         FAUCET_AMOUNT,
