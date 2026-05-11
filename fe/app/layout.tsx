@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import { SolanaProvider } from "@/components/providers/solana-provider";
 import "./globals.css";
 
-const outfit = Outfit({
+const outfit = localFont({
+  src: [
+    {
+      path: "../public/fonts/outfit-latin-ext.woff2",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/outfit-latin.woff2",
+      style: "normal",
+    },
+  ],
   variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 

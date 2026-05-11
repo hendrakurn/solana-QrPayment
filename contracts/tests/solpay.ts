@@ -20,6 +20,8 @@ describe("solpay", () => {
   let vaultBump: number;
   let vaultTokenAccount: anchor.web3.PublicKey;
   let payerTokenAccount: anchor.web3.PublicKey;
+  let firstPaymentRecord: anchor.web3.Keypair;
+  let refundablePaymentRecord: anchor.web3.Keypair;
 
   const authority = (provider.wallet as any).payer as anchor.web3.Keypair;
 
@@ -79,15 +81,8 @@ describe("solpay", () => {
     assert.equal(vault.bump, vaultBump);
   });
 
-  it("creates payment and transfers USDC to vault", async () => {
-    const paymentCount = 0;
-    const countBuffer = Buffer.alloc(8);
-    countBuffer.writeBigUInt64LE(BigInt(paymentCount));
-    const [paymentPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("payment"), vaultPda.toBuffer(), countBuffer],
-      program.programId
-    );
-
+  it("creates payment and transfers IDRX to vault", async () => {
+    firstPaymentRecord = anchor.web3.Keypair.generate();
     const amountIdrx = new BN(3_200_000); // 3.2 USDC
     const amountIdr = new BN(50_000);
     const merchantId = "MERCHANT001";
@@ -101,12 +96,18 @@ describe("solpay", () => {
       .createPayment(amountIdrx, amountIdr, merchantId, xenditRef)
       .accounts({
         payer: authority.publicKey,
+        vault: vaultPda,
+        vaultTokenAccount,
+        payerTokenAccount,
         idrxMint,
+        paymentRecord: firstPaymentRecord.publicKey,
       })
-      .signers([authority])
+      .signers([authority, firstPaymentRecord])
       .rpc();
 
-    const payment = await program.account.paymentRecord.fetch(paymentPda);
+    const payment = await program.account.paymentRecord.fetch(
+      firstPaymentRecord.publicKey
+    );
     assert.equal(payment.amountIdrx.toNumber(), 3_200_000);
     assert.equal(payment.amountIdr.toNumber(), 50_000);
     assert.equal(payment.merchantId, merchantId);
@@ -129,22 +130,19 @@ describe("solpay", () => {
   });
 
   it("confirms payment (authority-only)", async () => {
-    const countBuffer = Buffer.alloc(8);
-    countBuffer.writeBigUInt64LE(BigInt(0));
-    const [paymentPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("payment"), vaultPda.toBuffer(), countBuffer],
-      program.programId
-    );
-
     await program.methods
       .confirmPayment()
       .accounts({
         authority: authority.publicKey,
+        vault: vaultPda,
+        paymentRecord: firstPaymentRecord.publicKey,
       })
       .signers([authority])
       .rpc();
 
-    const payment = await program.account.paymentRecord.fetch(paymentPda);
+    const payment = await program.account.paymentRecord.fetch(
+      firstPaymentRecord.publicKey
+    );
     assert.deepEqual(payment.status, { confirmed: {} });
 
     const vault = await program.account.vault.fetch(vaultPda);
@@ -152,18 +150,13 @@ describe("solpay", () => {
   });
 
   it("rejects confirm on already-confirmed payment", async () => {
-    const countBuffer = Buffer.alloc(8);
-    countBuffer.writeBigUInt64LE(BigInt(0));
-    const [paymentPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("payment"), vaultPda.toBuffer(), countBuffer],
-      program.programId
-    );
-
     try {
       await program.methods
         .confirmPayment()
         .accounts({
           authority: authority.publicKey,
+          vault: vaultPda,
+          paymentRecord: firstPaymentRecord.publicKey,
         })
         .signers([authority])
         .rpc();
@@ -174,15 +167,7 @@ describe("solpay", () => {
   });
 
   it("refunds pending payment back to payer", async () => {
-    // Create payment #2 to refund
-    const paymentCount = 1;
-    const countBuffer = Buffer.alloc(8);
-    countBuffer.writeBigUInt64LE(BigInt(paymentCount));
-    const [paymentPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("payment"), vaultPda.toBuffer(), countBuffer],
-      program.programId
-    );
-
+    refundablePaymentRecord = anchor.web3.Keypair.generate();
     const amountIdrx = new BN(1_000_000); // 1 USDC
 
     await program.methods
@@ -194,9 +179,13 @@ describe("solpay", () => {
       )
       .accounts({
         payer: authority.publicKey,
+        vault: vaultPda,
+        vaultTokenAccount,
+        payerTokenAccount,
         idrxMint,
+        paymentRecord: refundablePaymentRecord.publicKey,
       })
-      .signers([authority])
+      .signers([authority, refundablePaymentRecord])
       .rpc();
 
     const payerBalanceBefore = (
@@ -207,13 +196,19 @@ describe("solpay", () => {
       .refundPayment()
       .accounts({
         authority: authority.publicKey,
+        vault: vaultPda,
+        vaultTokenAccount,
+        payerTokenAccount,
         payer: authority.publicKey,
         idrxMint,
+        paymentRecord: refundablePaymentRecord.publicKey,
       })
       .signers([authority])
       .rpc();
 
-    const payment = await program.account.paymentRecord.fetch(paymentPda);
+    const payment = await program.account.paymentRecord.fetch(
+      refundablePaymentRecord.publicKey
+    );
     assert.deepEqual(payment.status, { refunded: {} });
 
     const vault = await program.account.vault.fetch(vaultPda);

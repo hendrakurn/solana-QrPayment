@@ -28,6 +28,8 @@ function loadFaucetKeypair(): Keypair {
 }
 
 export async function POST(req: NextRequest) {
+  const connection = new Connection(RPC, "confirmed");
+
   try {
     const body = await req.json();
     const wallet = body?.wallet;
@@ -59,8 +61,6 @@ export async function POST(req: NextRequest) {
     } catch {
       return NextResponse.json({ error: "Faucet not configured on this server" }, { status: 503 });
     }
-
-    const connection = new Connection(RPC, "confirmed");
     const idrxMint = new PublicKey(IDRX_MINT_ADDRESS);
     const mintInfo = await getMint(connection, idrxMint);
 
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     let message = e instanceof Error ? e.message : String(e);
 
     if (e instanceof SendTransactionError) {
-      const logs = await e.getLogs().catch(() => []);
+      const logs = await e.getLogs(connection).catch(() => []);
       if (logs.some((line) => line.includes("owner does not match"))) {
         message =
           "FAUCET_KEYPAIR_JSON is not the mint authority for NEXT_PUBLIC_IDRX_MINT. Update the server keypair or mint config.";

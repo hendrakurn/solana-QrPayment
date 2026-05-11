@@ -37,8 +37,6 @@ pub struct CreatePayment<'info> {
         init,
         payer = payer,
         space = 8 + PaymentRecord::INIT_SPACE,
-        seeds = [b"payment", vault.key().as_ref(), &vault.payment_count.to_le_bytes()],
-        bump
     )]
     pub payment_record: Account<'info, PaymentRecord>,
 
@@ -79,7 +77,7 @@ pub fn handler(
     payment.xendit_reference = xendit_reference;
     payment.created_at = Clock::get()?.unix_timestamp;
     payment.updated_at = Clock::get()?.unix_timestamp;
-    payment.bump = ctx.bumps.payment_record;
+    payment.bump = 0;
 
     let vault = &mut ctx.accounts.vault;
     vault.total_received = vault

@@ -1,6 +1,7 @@
 import { Program, Idl, BN } from "@coral-xyz/anchor";
 import {
   ComputeBudgetProgram,
+  Keypair,
   PublicKey,
   Transaction,
   type TransactionInstruction,
@@ -10,7 +11,6 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { IDRX_MINT, IDRX_DECIMALS } from "./config";
-import { derivePaymentPda } from "./pda";
 import { fetchVault } from "./vault";
 
 export interface PayParams {
@@ -30,41 +30,54 @@ export interface PayParams {
 export interface PayResult {
   signature: string;
   paymentPda: string;
-  paymentCount: number;
   amountIdrxRaw: string;
   amountIdr: number;
+}
+
+export class TokenAccountMismatchError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TokenAccountMismatchError";
+  }
 }
 
 /**
  * Sends `create_payment` to the on-chain solpay program.
  *
  * Behavior:
- *  - Fetches the global Vault PDA to read the current `payment_count` and
- *    derive the next PaymentRecord PDA. Throws if the vault is not initialized.
+ *  - Fetches the global Vault PDA. Throws if the vault is not initialized.
  *  - If the connected wallet has no IDRX associated token account, bundles a
  *    `createAssociatedTokenAccountInstruction` as a pre-instruction so the
  *    user only sees ONE wallet popup for the whole flow.
+ *  - Generates a fresh payment-record keypair for each attempt so concurrent
+ *    or repeated payments cannot collide on the same account address.
  *  - Adds a small priority fee (1000 microLamports/CU) for resilience during
  *    devnet congestion.
  *  - Simulates the transaction client-side BEFORE sending to the wallet so
  *    that failures surface as a readable error in our UI instead of the
  *    wallet's "funds may be lost" simulation warning.
- *
- * Race note: between fetching `payment_count` and the program executing,
- * another payer could increment the counter, causing the `init` constraint to
- * fail. Acceptable for MVP — user retries. A future fix is per-user nonce
- * seeds in the PaymentRecord PDA.
  */
 export async function executePayment(p: PayParams): Promise<PayResult> {
   const conn = p.program.provider.connection;
 
-  // 1. Read vault state and derive the PaymentRecord PDA
+  // 1. Read vault state and allocate a unique payment record for this attempt
   const { vaultPda, vault } = await fetchVault(p.program);
-  const paymentCount = vault.paymentCount;
-  const [paymentPda] = derivePaymentPda(vaultPda, paymentCount);
+  const paymentRecord = Keypair.generate();
 
   const vaultAta = await getAssociatedTokenAddress(IDRX_MINT, vaultPda, true);
   const payerAta = await getAssociatedTokenAddress(IDRX_MINT, p.payer);
+
+  if (!vault.idrxMint.equals(IDRX_MINT)) {
+    throw new TokenAccountMismatchError(
+      `Vault mint mismatch: app uses ${IDRX_MINT.toBase58()} but vault expects ${vault.idrxMint.toBase58()}. Restart the frontend after fixing NEXT_PUBLIC_IDRX_MINT or reinitialize the vault.`,
+    );
+  }
+
+  if (!vault.vaultTokenAccount.equals(vaultAta)) {
+    throw new TokenAccountMismatchError(
+      `Vault token account mismatch: app derived ${vaultAta.toBase58()} but vault stores ${vault.vaultTokenAccount.toBase58()}. Reinitialize the vault for the active IDRX mint.`,
+    );
+  }
 
   // 2. Pre-instructions: priority fee + (optional) ATA creation if missing
   const preInstructions: TransactionInstruction[] = [
@@ -96,7 +109,7 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
       vaultTokenAccount: vaultAta,
       payerTokenAccount: payerAta,
       idrxMint: IDRX_MINT,
-      paymentRecord: paymentPda,
+      paymentRecord: paymentRecord.publicKey,
     })
     .preInstructions(preInstructions)
     .transaction();
@@ -104,11 +117,11 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
   const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
   tx.recentBlockhash = blockhash;
   tx.feePayer = p.payer;
+  tx.partialSign(paymentRecord);
 
   // 5. Simulate before asking wallet to sign.
   //    This catches program errors early so our UI shows a readable message
   //    instead of the wallet's generic "simulation failed" warning.
-  // Omit signers arg → web3.js sends sigVerify:false to RPC, no signature needed
   const sim = await conn.simulateTransaction(tx);
   if (sim.value.err) {
     const logs = sim.value.logs ?? [];
@@ -128,8 +141,7 @@ export async function executePayment(p: PayParams): Promise<PayResult> {
 
   return {
     signature: sig,
-    paymentPda: paymentPda.toBase58(),
-    paymentCount: paymentCount.toNumber(),
+    paymentPda: paymentRecord.publicKey.toBase58(),
     amountIdrxRaw: amountIdrxRaw.toString(),
     amountIdr: p.amountIdr,
   };

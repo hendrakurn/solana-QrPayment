@@ -271,31 +271,7 @@
         {
           "name": "payment_record",
           "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  97,
-                  121,
-                  109,
-                  101,
-                  110,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "vault"
-              },
-              {
-                "kind": "account",
-                "path": "vault.payment_count",
-                "account": "Vault"
-              }
-            ]
-          }
+          "signer": true
         },
         {
           "name": "token_program",

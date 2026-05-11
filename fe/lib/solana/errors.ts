@@ -1,5 +1,5 @@
 import { AnchorError } from "@coral-xyz/anchor";
-import { SimulationError } from "./pay";
+import { SimulationError, TokenAccountMismatchError } from "./pay";
 
 const MESSAGES: Record<string, string> = {
   Unauthorized: "Unauthorized: only the vault admin can perform this action.",
@@ -31,6 +31,10 @@ function parseSimulationLogs(logs: string[]): string {
 }
 
 export function parseSolpayError(err: unknown): string {
+  if (err instanceof TokenAccountMismatchError) {
+    return err.message;
+  }
+
   if (err instanceof SimulationError) {
     return parseSimulationLogs(err.logs);
   }
