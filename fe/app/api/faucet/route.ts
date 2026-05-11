@@ -23,8 +23,23 @@ const RATE_LIMIT_MS = 60_000;
 
 function loadFaucetKeypair(): Keypair {
   const raw = process.env.FAUCET_KEYPAIR_JSON;
-  if (!raw) throw new Error("FAUCET_KEYPAIR_JSON not configured");
-  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(raw)));
+  if (!raw) {
+    throw new Error("FAUCET_KEYPAIR_JSON env var is not set");
+  }
+  let parsed: number[];
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error(
+      `FAUCET_KEYPAIR_JSON is not valid JSON (value starts with: ${raw.slice(0, 20)}...)`,
+    );
+  }
+  if (!Array.isArray(parsed) || parsed.length !== 64) {
+    throw new Error(
+      `FAUCET_KEYPAIR_JSON must be a 64-byte array, got ${Array.isArray(parsed) ? parsed.length : typeof parsed} elements`,
+    );
+  }
+  return Keypair.fromSecretKey(Uint8Array.from(parsed));
 }
 
 export async function POST(req: NextRequest) {
@@ -58,8 +73,13 @@ export async function POST(req: NextRequest) {
     let faucetKeypair: Keypair;
     try {
       faucetKeypair = loadFaucetKeypair();
-    } catch {
-      return NextResponse.json({ error: "Faucet not configured on this server" }, { status: 503 });
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      console.error("[faucet] keypair load failed:", reason);
+      return NextResponse.json(
+        { error: `Faucet not configured on this server: ${reason}` },
+        { status: 503 },
+      );
     }
     const idrxMint = new PublicKey(IDRX_MINT_ADDRESS);
     const mintInfo = await getMint(connection, idrxMint);
